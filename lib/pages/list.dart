@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:notifier/globals.dart';
+import 'package:notifier/models/src/notification.dart';
 import 'package:notifier/models/list.dart';
 
 class ListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.add),
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.grey[800],
-      ),
+      floatingActionButton: addButton(),
       body: _List(),
     );
   }
@@ -84,14 +80,24 @@ class _List extends StatelessWidget {
           ],
         );
       },
-      // builder: (context, child, list) => ListView(
-      //       children: list.items
-      //           // For each item in the list:
-      //           .map(
-      //             (item) => Text('· ${item.title}'),
-      //           )
-      //           .toList(),
-      //     ),
+    );
+  }
+}
+
+class addButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ScopedModelDescendant<ListModel>(
+      builder: (context, child, list) {
+        return FloatingActionButton(
+          onPressed: () => list.add(
+            NotificationItem(title: 'nice', description: 'bread'),
+          ),
+          child: Icon(Icons.add),
+          foregroundColor: Colors.white,
+          backgroundColor: Colors.grey[800],
+        );
+      },
     );
   }
 }

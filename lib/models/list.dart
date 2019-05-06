@@ -3,21 +3,15 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:notifier/models/src/notification.dart';
 
 class ListModel extends Model {
-  final List<Notification> _notifications = [
-    Notification(
-      title: 'nice',
-      description: 'breat',
-    ),
-    Notification(
-      title: 'cold',
-      description: 'sheep',
-    ),
+  final List<NotificationItem> _notificationItems = [
+    NotificationItem(title: 'nice', description: 'breat'),
+    NotificationItem(title: 'cold', description: 'sheep'),
   ];
 
-  UnmodifiableListView<Notification> get items => UnmodifiableListView(_notifications);
+  UnmodifiableListView<NotificationItem> get items => UnmodifiableListView(_notificationItems);
 
-  void add(Notification notification) {
-    _notifications.add(notification);
+  void add(NotificationItem notificationItem) {
+    _notificationItems.add(notificationItem);
     notifyListeners(); // tell the model to rebuild the widgets that depend on it
   }
 
