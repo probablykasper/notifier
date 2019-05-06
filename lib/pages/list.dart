@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:notifier/globals.dart';
 
 class ListPage extends StatelessWidget {
   @override
@@ -10,9 +12,29 @@ class ListPage extends StatelessWidget {
         foregroundColor: Colors.white,
         backgroundColor: Colors.grey[800],
       ),
-      body: Center(
-        child: Text('pudding'),
+      body: CustomScrollView(
+        slivers: <Widget>[
+          const SliverAppBar(
+            pinned: true,
+            // backgroundColor: Colors.black26,
+            floating: false,
+            snap: false,
+            expandedHeight: 200.0,
+            flexibleSpace: FlexibleSpaceBar(
+              title: Text(
+                'Notifier',
+                style: TextStyle(
+                  color: Globals.blue,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              titlePadding: EdgeInsets.only(left: 72, bottom: 16),
+            ),
+          ),
+          // LIST GOES HERE
+        ],
       ),
     );
   }
 }
+

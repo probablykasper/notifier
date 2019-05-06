@@ -16,6 +16,12 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Notifier',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        fontFamily: 'Rubik',
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: Colors.grey[900],
+      ),
       home: ListPage(),
     );
   }
