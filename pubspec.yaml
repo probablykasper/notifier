@@ -59,6 +59,7 @@ flutter:
     - family: Rubik
       fonts:
         - asset: assets/Rubik/Rubik-Regular.ttf
+        - asset: assets/Rubik/Rubik-Medium.ttf
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:

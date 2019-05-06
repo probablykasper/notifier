@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'package:notifier/notifier_list.dart';
+import 'package:notifier/notifications_page.dart';
 
 void main() => runApp(App());
 
@@ -9,22 +8,13 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Text Update',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        
         fontFamily: 'Rubik',
         brightness: Brightness.dark,
-        // backgroundColor: Colors.blue,
+        scaffoldBackgroundColor: Colors.grey[900],
       ),
-      home: Scaffold(
-        // appBar: SliverAppBar(
-        //   centerTitle: true,
-        //   title: Text('Text Upper Dapper'),
-        // ),
-        // body: Container(
-        //   child: Text('hey'),
-        // ),
-        body: NotifierList(),
-      ),
+      home: NotificationsPage(),
     );
   }
 }
