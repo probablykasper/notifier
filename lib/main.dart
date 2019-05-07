@@ -21,6 +21,7 @@ class App extends StatelessWidget {
         fontFamily: 'Rubik',
         brightness: Brightness.dark,
         scaffoldBackgroundColor: Colors.grey[900],
+        splashColor: Colors.transparent,
       ),
       home: ListPage(),
     );

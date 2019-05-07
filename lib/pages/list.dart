@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:notifier/globals.dart';
-import 'package:notifier/models/src/notification.dart';
 import 'package:notifier/models/list.dart';
 
 class ListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: addButton(),
+      floatingActionButton: AddButton(),
       body: _List(),
     );
   }
@@ -84,20 +83,74 @@ class _List extends StatelessWidget {
   }
 }
 
-class addButton extends StatelessWidget {
+class AddButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<ListModel>(
       builder: (context, child, list) {
         return FloatingActionButton(
-          onPressed: () => list.add(
-            NotificationItem(title: 'nice', description: 'bread'),
-          ),
+          onPressed: () {
+            return showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return NotificationDialog();
+              },
+            );
+          },
+          // onPressed: () => list.add(
+          //   NotificationItem(title: 'nice', description: 'bread'),
+          // ),
           child: Icon(Icons.add),
           foregroundColor: Colors.white,
           backgroundColor: Colors.grey[800],
         );
       },
+    );
+  }
+}
+
+class NotificationDialog extends StatelessWidget {
+  @override
+  build(BuildContext context) {
+    return SimpleDialog(
+      title: Text('Add notification'),
+      contentPadding: EdgeInsets.all(12),
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text('howdyx'),
+            ],
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            MaterialButton(
+              minWidth: 90.0,
+              elevation: 0,
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+
+            ),
+            MaterialButton(
+              minWidth: 90.0,
+              elevation: 0,
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              color: Colors.grey[700],
+              child: Text('Save'),
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            ),
+          ],
+        )
+      ],
     );
   }
 }
