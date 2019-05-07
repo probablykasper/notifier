@@ -98,7 +98,7 @@ class _List extends StatelessWidget {
 
 class NotificationDialog extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
-  final NotificationItem _newNotificationItem = NotificationItem();
+  final NotificationItem _newNotificationItem = NotificationItem(title: '', description: '');
 
   @override
   build(BuildContext context) {
@@ -121,8 +121,9 @@ class NotificationDialog extends StatelessWidget {
                     ),
                     style: TextStyle(fontSize: 20),
                     onSaved: (String value) {
+                      print('saved');
                       _newNotificationItem.title = value;
-                    },
+                    }
                   ),
                   TextFormField(
                     decoration: InputDecoration(
@@ -131,7 +132,7 @@ class NotificationDialog extends StatelessWidget {
                     ),
                     onSaved: (String value) {
                       _newNotificationItem.description = value;
-                    },
+                    }
                   ),
                 ],
               ),
@@ -156,8 +157,8 @@ class NotificationDialog extends StatelessWidget {
                     onPressed: () {
                       Navigator.of(context).pop();
                       if (_formKey.currentState.validate()) {
-                        // list.add()
                         _formKey.currentState.save();
+                        list.add(_newNotificationItem);
                       }
                     },
                     color: Colors.grey[700],
