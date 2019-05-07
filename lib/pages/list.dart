@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:notifier/globals.dart';
+import 'package:notifier/models/src/notification.dart';
 import 'package:notifier/models/list.dart';
 
 class ListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: AddButton(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          return showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return NotificationDialog();
+            },
+          );
+        },
+        child: Icon(Icons.add),
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.grey[800],
+      ),
       body: _List(),
     );
   }
@@ -83,74 +96,80 @@ class _List extends StatelessWidget {
   }
 }
 
-class AddButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return ScopedModelDescendant<ListModel>(
-      builder: (context, child, list) {
-        return FloatingActionButton(
-          onPressed: () {
-            return showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return NotificationDialog();
-              },
-            );
-          },
-          // onPressed: () => list.add(
-          //   NotificationItem(title: 'nice', description: 'bread'),
-          // ),
-          child: Icon(Icons.add),
-          foregroundColor: Colors.white,
-          backgroundColor: Colors.grey[800],
-        );
-      },
-    );
-  }
-}
-
 class NotificationDialog extends StatelessWidget {
+  final _formKey = GlobalKey<FormState>();
+  final NotificationItem _newNotificationItem = NotificationItem();
+
   @override
   build(BuildContext context) {
-    return SimpleDialog(
-      title: Text('Add notification'),
-      contentPadding: EdgeInsets.all(12),
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text('howdyx'),
-            ],
-          ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+    return ScopedModelDescendant<ListModel>(builder: (context, child, list) {
+      return Form(
+        key: _formKey,
+        child: SimpleDialog(
+          title: Text('Add notification'),
+          contentPadding: EdgeInsets.all(12),
           children: <Widget>[
-            MaterialButton(
-              minWidth: 90.0,
-              elevation: 0,
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text('Cancel'),
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-
+            Padding(
+              padding: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  TextFormField(
+                    decoration: InputDecoration(
+                      hintText: 'Title',
+                      border: InputBorder.none,
+                    ),
+                    style: TextStyle(fontSize: 20),
+                    onSaved: (String value) {
+                      _newNotificationItem.title = value;
+                    },
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                      hintText: 'Description',
+                      border: InputBorder.none,
+                    ),
+                    onSaved: (String value) {
+                      _newNotificationItem.description = value;
+                    },
+                  ),
+                ],
+              ),
             ),
-            MaterialButton(
-              minWidth: 90.0,
-              elevation: 0,
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              color: Colors.grey[700],
-              child: Text('Save'),
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            Container(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  MaterialButton(
+                    minWidth: 90.0,
+                    elevation: 0,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Cancel'),
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  Container(width: 12),
+                  MaterialButton(
+                    minWidth: 90.0,
+                    elevation: 0,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      if (_formKey.currentState.validate()) {
+                        // list.add()
+                        _formKey.currentState.save();
+                      }
+                    },
+                    color: Colors.grey[700],
+                    child: Text('Save'),
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                ],
+              ),
             ),
           ],
-        )
-      ],
-    );
+        ),
+      );
+    });
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:notifier/globals.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:notifier/models/list.dart';
 import 'package:notifier/pages/list.dart';
@@ -22,6 +23,9 @@ class App extends StatelessWidget {
         brightness: Brightness.dark,
         scaffoldBackgroundColor: Colors.grey[900],
         splashColor: Colors.transparent,
+        textSelectionColor: Colors.white24,
+        textSelectionHandleColor: Globals.blue,
+        accentColor: Colors.white,
       ),
       home: ListPage(),
     );
