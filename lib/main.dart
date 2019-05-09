@@ -22,7 +22,6 @@ class App extends StatelessWidget {
         fontFamily: 'Rubik',
         brightness: Brightness.dark,
         scaffoldBackgroundColor: Colors.grey[900],
-        splashColor: Colors.transparent,
         textSelectionColor: Colors.white24,
         textSelectionHandleColor: Globals.blue,
         accentColor: Colors.white,

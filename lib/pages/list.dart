@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:notifier/globals.dart';
-import 'package:notifier/models/src/notification.dart';
 import 'package:notifier/models/list.dart';
 
 class ListPage extends StatelessWidget {
@@ -58,6 +57,7 @@ class _List extends StatelessWidget {
               delegate: SliverChildListDelegate(
                 list.items.map((item) {
                   return InkWell(
+                    splashColor: Globals.defaultSplashColor,
                     onTap: () => print("Someone tapped me and it felt great"),
                     child: Container(
                       padding: EdgeInsets.symmetric(
@@ -67,7 +67,7 @@ class _List extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            item.title,
+                            item['title'],
                             style: TextStyle(
                               fontSize: 16,
                               // color: Color(0xff00B0FF),
@@ -75,7 +75,7 @@ class _List extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            item.description,
+                            item['description'],
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -97,8 +97,8 @@ class _List extends StatelessWidget {
 }
 
 class NotificationDialog extends StatelessWidget {
-  final _formKey = GlobalKey<FormState>();
-  final NotificationItem _newNotificationItem = NotificationItem(title: '', description: '');
+  static GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final dynamic _newNotificationItem = {'title': '', 'description': ''};
 
   @override
   build(BuildContext context) {
@@ -109,8 +109,9 @@ class NotificationDialog extends StatelessWidget {
           title: Text('Add notification'),
           contentPadding: EdgeInsets.all(12),
           children: <Widget>[
-            Padding(
+            Container(
               padding: EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 12),
+              width: 600,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -122,8 +123,8 @@ class NotificationDialog extends StatelessWidget {
                     style: TextStyle(fontSize: 20),
                     onSaved: (String value) {
                       print('saved');
-                      _newNotificationItem.title = value;
-                    }
+                      _newNotificationItem['title'] = value;
+                    },
                   ),
                   TextFormField(
                     decoration: InputDecoration(
@@ -131,42 +132,40 @@ class NotificationDialog extends StatelessWidget {
                       border: InputBorder.none,
                     ),
                     onSaved: (String value) {
-                      _newNotificationItem.description = value;
-                    }
+                      _newNotificationItem['description'] = value;
+                    },
                   ),
                 ],
               ),
             ),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  MaterialButton(
-                    minWidth: 90.0,
-                    elevation: 0,
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Cancel'),
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  Container(width: 12),
-                  MaterialButton(
-                    minWidth: 90.0,
-                    elevation: 0,
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      if (_formKey.currentState.validate()) {
-                        _formKey.currentState.save();
-                        list.add(_newNotificationItem);
-                      }
-                    },
-                    color: Colors.grey[700],
-                    child: Text('Save'),
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                ],
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                MaterialButton(
+                  minWidth: 90.0,
+                  elevation: 0,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cancel'),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                Container(width: 12),
+                MaterialButton(
+                  minWidth: 90.0,
+                  elevation: 0,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    if (_formKey.currentState.validate()) {
+                      _formKey.currentState.save();
+                      list.add(_newNotificationItem);
+                    }
+                  },
+                  color: Colors.grey[700],
+                  child: Text('Save'),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+              ],
             ),
           ],
         ),
