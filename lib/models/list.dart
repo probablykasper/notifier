@@ -8,31 +8,36 @@ class ListModel extends Model {
   //   NotificationItem(title: 'nice', description: 'breat'),
   //   NotificationItem(title: 'cold', description: 'sheep'),
   // ];
-  List<dynamic> _notificationItems = [];
+  List _notificationItems = [];
 
-  UnmodifiableListView<dynamic> get items => UnmodifiableListView(_notificationItems);
-
-  ListModel() {
-    _read();
+  UnmodifiableListView get items {
+    print('ListModel get items');
+    return UnmodifiableListView(_notificationItems);
   }
 
-  _read() async {
+  ListModel({load: false}) {
+    print(load ? 'ListModel constructor + loading' : 'ListModel constructor');
+    if (load == true) _load();
+  }
+
+  _load() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String notificationItems = prefs.getString('notificationItems') ?? '[]';
     _notificationItems = json.decode(notificationItems);
-    print(_notificationItems);
+    print('ListModel _load');
     notifyListeners();
   }
 
   _save() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('notificationItems', json.encode(_notificationItems));
+    print('ListModel _save');
   }
 
   void add(dynamic notificationItem) async {
     _notificationItems.add(notificationItem);
-    _save();
-    print(_notificationItems);
+    await _save();
+    print('ListModel add');
     notifyListeners(); // tell the model to rebuild the widgets that depend on it
   }
 

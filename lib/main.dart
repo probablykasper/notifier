@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:notifier/globals.dart';
-import 'package:scoped_model/scoped_model.dart';
-import 'package:notifier/models/list.dart';
 import 'package:notifier/pages/list.dart';
 
 void main() {
-  final list = ListModel();
-  runApp(ScopedModel<ListModel>(
-    model: list,
-    child: App(),
-  ));
+  runApp(App());
 }
 
 class App extends StatelessWidget {
@@ -25,6 +19,7 @@ class App extends StatelessWidget {
         textSelectionColor: Colors.white24,
         textSelectionHandleColor: Globals.blue,
         accentColor: Colors.white,
+        toggleableActiveColor: Globals.blue,
       ),
       home: ListPage(),
     );
