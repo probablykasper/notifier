@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:notifier/models/notification_dialog.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:notifier/globals.dart';
@@ -109,84 +111,108 @@ class NotificationDialog extends StatelessWidget {
       child: ScopedModelDescendant<NotificationDialogModel>(
         builder: (context, child, model) {
           print('Building dialog ScopedModelDescendant');
-          return SimpleDialog(
-            title: Text('Add notification'),
-            contentPadding: EdgeInsets.all(12),
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(top: 8, bottom: 12),
-                width: 600,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    //* TITLE
-                    TextField(
-                      controller: TextEditingController(text: model.item['title']),
-                      decoration: InputDecoration(
-                        hintText: 'Title',
-                        border: InputBorder.none,
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          return Dialog(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(left: 24, top: 24, right: 24),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        'Add notification',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                      onChanged: (String newValue) {
-                        model.item['title'] = newValue;
-                      },
-                    ),
-                    //* DESCRIPTION
-                    TextField(
-                      controller: TextEditingController(text: model.item['description']),
-                      decoration: InputDecoration(
-                        hintText: 'Description',
-                        border: InputBorder.none,
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                      ),
-                      onChanged: (String newValue) {
-                        model.item['description'] = newValue;
-                      },
-                    ),
-                    SwitchListTile(
-                      title: Text('Notification cannot be swiped away'),
-                      value: model.item['noSwipeAway'],
-                      onChanged: (bool newValue) {
-                        model.item['noSwipeAway'] = newValue;
-                        model.rebuild();
-                      },
-                    ),
-                  ],
+                      Icon(Icons.delete),
+                    ],
+                  ),
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  //* CANCEL
-                  MaterialButton(
-                    minWidth: 90.0,
-                    elevation: 0,
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('Cancel'),
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                Padding(
+                  padding: EdgeInsets.only(top: 12, bottom: 16),
+                  child: Container(
+                    padding: EdgeInsets.only(top: 8, bottom: 12),
+                    width: 600,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        //* TITLE
+                        TextField(
+                          controller:
+                              TextEditingController(text: model.item['title']),
+                          decoration: InputDecoration(
+                            hintText: 'Title',
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 12),
+                          ),
+                          onChanged: (String newValue) {
+                            model.item['title'] = newValue;
+                          },
+                        ),
+                        //* DESCRIPTION
+                        TextField(
+                          controller: TextEditingController(
+                              text: model.item['description']),
+                          decoration: InputDecoration(
+                            hintText: 'Description',
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 12),
+                          ),
+                          onChanged: (String newValue) {
+                            model.item['description'] = newValue;
+                          },
+                        ),
+                        //* CANNOT BE SWIPED AWAY?
+                        SwitchListTile(
+                          title: Text('Notification cannot be swiped away'),
+                          value: model.item['noSwipeAway'],
+                          onChanged: (bool newValue) {
+                            model.item['noSwipeAway'] = newValue;
+                            model.rebuild();
+                          },
+                        ),
+                      ],
+                    ),
                   ),
-                  Container(width: 12),
-                  //* SAVE
-                  MaterialButton(
-                    minWidth: 90.0,
-                    elevation: 0,
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      // print(model.item);
-                      // print('SAVE HERE');
-                      listModel.add(model.item);
-                    },
-                    color: Colors.grey[700],
-                    child: Text('Save'),
-                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      //* CANCEL
+                      MaterialButton(
+                        minWidth: 90.0,
+                        elevation: 0,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Cancel'),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      Container(width: 12),
+                      //* SAVE
+                      MaterialButton(
+                        minWidth: 90.0,
+                        elevation: 0,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          listModel.add(model.item);
+                        },
+                        color: Colors.grey[700],
+                        child: Text('Save'),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           );
         },
       ),
