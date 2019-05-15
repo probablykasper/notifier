@@ -60,13 +60,21 @@ class ListModel extends Model {
     _notificationItems[id] = notificationItem;
     await _save();
     print('ListModel add');
-    notifyListeners(); // tell the model to rebuild the widgets that depend on it
+    notifyListeners();
   }
 
   void delete(String id) async {
     _notificationItems.remove(id);
     await _save();
     print('ListModel delete');
+    notifyListeners();
+  }
+
+  void update({String id, dynamic notificationItem}) async {
+    notificationItem['id'] = id;
+    _notificationItems[id] = notificationItem;
+    await _save();
+    print('ListModel update');
     notifyListeners();
   }
 

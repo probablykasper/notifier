@@ -234,7 +234,11 @@ class NotificationDialog extends StatelessWidget {
                       elevation: 0,
                       onPressed: () {
                         Navigator.of(context).pop();
-                        listModel.add(model.item);
+                        if (mode == 'new') {
+                          listModel.add(model.item);
+                        } else if (mode == 'edit') {
+                          listModel.update(id: model.item['id'], notificationItem: model.item);
+                        }
                       },
                       color: Colors.grey[700],
                       child: Text('Save'),
