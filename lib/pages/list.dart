@@ -62,7 +62,7 @@ class List extends StatelessWidget {
           print('Building list ScopedModelDescendant');
           return SliverList(
             delegate: SliverChildListDelegate(
-              listModel.items.map((item) {
+              listModel.itemsAsList.map((item) {
                 return InkWell(
                   splashColor: Globals.defaultSplashColor,
                   onTap: () {
@@ -142,6 +142,7 @@ class NotificationDialog extends StatelessWidget {
                     ),
                   ),
                 ),
+                //* DELETE
                 (() {
                   if (mode == 'edit')
                     return InkWell(

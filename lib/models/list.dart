@@ -1,18 +1,38 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:core';
+import 'dart:math';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ListModel extends Model {
-  // List<NotificationItem> _notificationItems = [
-  //   NotificationItem(title: 'nice', description: 'breat'),
-  //   NotificationItem(title: 'cold', description: 'sheep'),
-  // ];
-  List _notificationItems = [];
 
-  UnmodifiableListView get items {
+String generateId() {
+  const strlen = 8;
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+
+  Random rnd = new Random(new DateTime.now().millisecondsSinceEpoch);
+  String result = "";
+  for (var i = 0; i < strlen; i++) {
+    result += chars[rnd.nextInt(chars.length)];
+  }
+  return result;
+}
+
+class ListModel extends Model {
+
+  Map<String, dynamic> _notificationItems = {};
+  
+  UnmodifiableMapView get items {
     print('ListModel get items');
-    return UnmodifiableListView(_notificationItems);
+    return UnmodifiableMapView(_notificationItems);
+  }
+
+  List get itemsAsList {
+    List listOfItems = [];
+    _notificationItems.forEach((index, item) {
+      listOfItems.add(item);
+    });
+    return listOfItems;
   }
 
   ListModel({load: false}) {
@@ -22,7 +42,7 @@ class ListModel extends Model {
 
   _load() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String notificationItems = prefs.getString('notificationItems') ?? '[]';
+    String notificationItems = prefs.getString('notificationItems') ?? '{}';
     _notificationItems = json.decode(notificationItems);
     print('ListModel _load');
     notifyListeners();
@@ -35,7 +55,9 @@ class ListModel extends Model {
   }
 
   void add(dynamic notificationItem) async {
-    _notificationItems.add(notificationItem);
+    final id = generateId();
+    notificationItem['id'] = id;
+    _notificationItems[id] = notificationItem;
     await _save();
     print('ListModel add');
     notifyListeners(); // tell the model to rebuild the widgets that depend on it
