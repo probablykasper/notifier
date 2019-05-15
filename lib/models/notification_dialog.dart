@@ -6,7 +6,12 @@ class NotificationDialogModel extends Model {
     'description': '',
     'noSwipeAway': false,
   };
-  
+  Map<String, Object> initialItem;
+
+  NotificationDialogModel({this.initialItem}) {
+    if (initialItem != null) item = initialItem;
+  }
+
   rebuild() {
     notifyListeners();
   }

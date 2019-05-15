@@ -15,7 +15,7 @@ class ListPage extends StatelessWidget {
           return showDialog(
             context: context,
             builder: (BuildContext context) {
-              return NotificationDialog();
+              return NotificationDialog(mode: 'new');
             },
           );
         },
@@ -65,7 +65,15 @@ class List extends StatelessWidget {
               listModel.items.map((item) {
                 return InkWell(
                   splashColor: Globals.defaultSplashColor,
-                  onTap: () => print("Someone tapped me and it felt great"),
+                  onTap: () {
+                    print("Someone tapped me and it felt great");
+                    return showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return NotificationDialog(mode: 'edit');
+                      },
+                    );
+                  },
                   child: Container(
                     padding:
                         EdgeInsets.symmetric(vertical: 24.0, horizontal: 32.0),
@@ -103,116 +111,137 @@ class List extends StatelessWidget {
 }
 
 class NotificationDialog extends StatelessWidget {
+  final Map<String, Object> initialItem;
+  final String mode;
+
+  NotificationDialog({this.mode, this.initialItem});
+
   @override
   Widget build(BuildContext context) {
     print('Building dialog ScopedModel');
     return ScopedModel<NotificationDialogModel>(
-      model: NotificationDialogModel(),
+      model: NotificationDialogModel(initialItem: initialItem),
       child: ScopedModelDescendant<NotificationDialogModel>(
         builder: (context, child, model) {
           print('Building dialog ScopedModelDescendant');
-          return Dialog(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+          double bp = 12.0;
+          return SimpleDialog(
+            titlePadding:
+                EdgeInsets.fromLTRB(24.0 - bp, 24.0 - bp, 24.0 - bp, 0.0),
+            contentPadding: EdgeInsets.all(0),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.only(left: 24, top: 24, right: 24),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        'Add notification',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Icon(Icons.delete),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 12, bottom: 16),
-                  child: Container(
-                    padding: EdgeInsets.only(top: 8, bottom: 12),
-                    width: 600,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        //* TITLE
-                        TextField(
-                          controller:
-                              TextEditingController(text: model.item['title']),
-                          decoration: InputDecoration(
-                            hintText: 'Title',
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 12),
-                          ),
-                          onChanged: (String newValue) {
-                            model.item['title'] = newValue;
-                          },
-                        ),
-                        //* DESCRIPTION
-                        TextField(
-                          controller: TextEditingController(
-                              text: model.item['description']),
-                          decoration: InputDecoration(
-                            hintText: 'Description',
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 12),
-                          ),
-                          onChanged: (String newValue) {
-                            model.item['description'] = newValue;
-                          },
-                        ),
-                        //* CANNOT BE SWIPED AWAY?
-                        SwitchListTile(
-                          title: Text('Notification cannot be swiped away'),
-                          value: model.item['noSwipeAway'],
-                          onChanged: (bool newValue) {
-                            model.item['noSwipeAway'] = newValue;
-                            model.rebuild();
-                          },
-                        ),
-                      ],
+                  padding: EdgeInsets.only(left: bp),
+                  child: Text(
+                    'Add notification',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      //* CANCEL
-                      MaterialButton(
-                        minWidth: 90.0,
-                        elevation: 0,
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('Cancel'),
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                (() {
+                  if (mode == 'edit')
+                    return InkWell(
+                      onTap: () {},
+                      splashColor: Globals.defaultSplashColor,
+                      borderRadius: BorderRadius.circular(50),
+                      child: Padding(
+                        padding: EdgeInsets.all(bp),
+                        child: Icon(Icons.delete),
                       ),
-                      Container(width: 12),
-                      //* SAVE
-                      MaterialButton(
-                        minWidth: 90.0,
-                        elevation: 0,
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          listModel.add(model.item);
+                    );
+                  else
+                    return Container();
+                })(),
+              ],
+            ),
+            // contentPadding: EdgeInsets.all(0),
+            // titlePadding: EdgeInsets.all(0),
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.only(top: 12.0 - bp, bottom: 16),
+                child: Container(
+                  padding: EdgeInsets.only(top: 8, bottom: 12),
+                  width: 600,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      //* TITLE
+                      TextField(
+                        controller:
+                            TextEditingController(text: model.item['title']),
+                        decoration: InputDecoration(
+                          hintText: 'Title',
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 12),
+                        ),
+                        onChanged: (String newValue) {
+                          model.item['title'] = newValue;
                         },
-                        color: Colors.grey[700],
-                        child: Text('Save'),
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      //* DESCRIPTION
+                      TextField(
+                        controller: TextEditingController(
+                            text: model.item['description']),
+                        decoration: InputDecoration(
+                          hintText: 'Description',
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 12),
+                        ),
+                        onChanged: (String newValue) {
+                          model.item['description'] = newValue;
+                        },
+                      ),
+                      //* CANNOT BE SWIPED AWAY?
+                      SwitchListTile(
+                        title: Text('Notification cannot be swiped away'),
+                        value: model.item['noSwipeAway'],
+                        onChanged: (bool newValue) {
+                          model.item['noSwipeAway'] = newValue;
+                          model.rebuild();
+                        },
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(12),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    //* CANCEL
+                    MaterialButton(
+                      minWidth: 90.0,
+                      elevation: 0,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text('Cancel'),
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    Container(width: 12),
+                    //* SAVE
+                    MaterialButton(
+                      minWidth: 90.0,
+                      elevation: 0,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        listModel.add(model.item);
+                      },
+                      color: Colors.grey[700],
+                      child: Text('Save'),
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           );
         },
       ),
