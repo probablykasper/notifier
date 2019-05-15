@@ -63,4 +63,11 @@ class ListModel extends Model {
     notifyListeners(); // tell the model to rebuild the widgets that depend on it
   }
 
+  void delete(String id) async {
+    _notificationItems.remove(id);
+    await _save();
+    print('ListModel delete');
+    notifyListeners();
+  }
+
 }

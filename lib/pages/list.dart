@@ -70,7 +70,7 @@ class List extends StatelessWidget {
                     return showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return NotificationDialog(mode: 'edit');
+                        return NotificationDialog(mode: 'edit', initialItem: item);
                       },
                     );
                   },
@@ -111,7 +111,7 @@ class List extends StatelessWidget {
 }
 
 class NotificationDialog extends StatelessWidget {
-  final Map<String, Object> initialItem;
+  final Map<String, dynamic> initialItem;
   final String mode;
 
   NotificationDialog({this.mode, this.initialItem});
@@ -146,7 +146,10 @@ class NotificationDialog extends StatelessWidget {
                 (() {
                   if (mode == 'edit')
                     return InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        listModel.delete(model.item['id']);
+                        Navigator.of(context).pop();
+                      },
                       splashColor: Globals.defaultSplashColor,
                       borderRadius: BorderRadius.circular(50),
                       child: Padding(
@@ -159,8 +162,6 @@ class NotificationDialog extends StatelessWidget {
                 })(),
               ],
             ),
-            // contentPadding: EdgeInsets.all(0),
-            // titlePadding: EdgeInsets.all(0),
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.only(top: 12.0 - bp, bottom: 16),
