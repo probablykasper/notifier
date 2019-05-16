@@ -78,7 +78,6 @@ class List extends StatelessWidget {
                     padding:
                         EdgeInsets.symmetric(vertical: 24.0, horizontal: 32.0),
                     child: Column(
-                      // mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
@@ -111,10 +110,12 @@ class List extends StatelessWidget {
 }
 
 class NotificationDialog extends StatelessWidget {
-  final Map<String, dynamic> initialItem;
+  Map<String, dynamic> initialItem;
   final String mode;
 
-  NotificationDialog({this.mode, this.initialItem});
+  NotificationDialog({this.mode, this.initialItem}) {
+    initialItem = Map<String, dynamic>.from(this.initialItem);
+  }
 
   @override
   Widget build(BuildContext context) {
