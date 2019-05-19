@@ -117,10 +117,9 @@ class NotificationDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> initialItemCopied = Map<String, dynamic>.from(initialItem);
     print('Building dialog ScopedModel');
     return ScopedModel<NotificationDialogModel>(
-      model: NotificationDialogModel(initialItem: initialItemCopied),
+      model: NotificationDialogModel(initialItem: initialItem),
       child: ScopedModelDescendant<NotificationDialogModel>(
         builder: (context, child, model) {
           print('Building dialog ScopedModelDescendant');
