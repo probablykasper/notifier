@@ -134,7 +134,37 @@ class NotificationDialog extends StatelessWidget {
     );
 
     if (pickedDate != null && pickedDate != model.item['date']) {
-      model.item['date'] = pickedDate.millisecondsSinceEpoch;
+      final newDate = DateTime(
+        pickedDate.year,
+        pickedDate.month,
+        pickedDate.day,
+        initialDate.hour,
+        initialDate.minute,
+      );
+      model.item['date'] = newDate.millisecondsSinceEpoch;
+      model.rebuild();
+    }
+  }
+
+  Future<Null> _selectTime(
+      BuildContext context, NotificationDialogModel model) async {
+    final TimeOfDay pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (pickedTime != null && pickedTime != model.item['time']) {
+      final selectedDate =
+          DateTime.fromMillisecondsSinceEpoch(model.item['date']);
+
+      final newDate = DateTime(
+        selectedDate.year,
+        selectedDate.month,
+        selectedDate.day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
+      model.item['date'] = newDate.millisecondsSinceEpoch;
       model.rebuild();
     }
   }
@@ -235,11 +265,27 @@ class NotificationDialog extends StatelessWidget {
                         leading: Icon(Icons.calendar_today),
                         title: Text('Date'),
                         subtitle: Text(
-                          DateFormat.yMMMMd().format(DateTime.fromMillisecondsSinceEpoch(model.item['date'])),
+                          DateFormat.yMMMMd().format(
+                              DateTime.fromMillisecondsSinceEpoch(
+                                  model.item['date'])),
                         ),
                         onTap: () async {
                           print('Selecting date');
                           _selectDate(context, model);
+                          model.rebuild();
+                        },
+                      ),
+                      ListTile(
+                        leading: Icon(Icons.schedule),
+                        title: Text('Time'),
+                        subtitle: Text(
+                          DateFormat('h:mm a').format(
+                              DateTime.fromMillisecondsSinceEpoch(
+                                  model.item['date'])),
+                        ),
+                        onTap: () async {
+                          print('Selecting time');
+                          _selectTime(context, model);
                           model.rebuild();
                         },
                       ),
