@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:notifier/models/notification_dialog.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:intl/intl.dart';
 import 'package:notifier/globals.dart';
 import 'package:notifier/models/list.dart';
 
@@ -70,7 +71,9 @@ class List extends StatelessWidget {
                     return showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return NotificationDialog(mode: 'edit', initialItem: Map<String, dynamic>.from(item));
+                        return NotificationDialog(
+                            mode: 'edit',
+                            initialItem: Map<String, dynamic>.from(item));
                       },
                     );
                   },
@@ -114,6 +117,27 @@ class NotificationDialog extends StatelessWidget {
   final String mode;
 
   NotificationDialog({this.mode, this.initialItem});
+
+  Future<Null> _selectDate(
+      BuildContext context, NotificationDialogModel model) async {
+    final firstDate = DateTime.now().subtract(Duration(days: 1));
+    var initialDate = DateTime.fromMillisecondsSinceEpoch(model.item['date']);
+    if (initialDate.isBefore(firstDate)) {
+      initialDate = firstDate;
+    }
+
+    final DateTime pickedDate = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: DateTime(3000),
+    );
+
+    if (pickedDate != null && pickedDate != model.item['date']) {
+      model.item['date'] = pickedDate.millisecondsSinceEpoch;
+      model.rebuild();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -207,6 +231,18 @@ class NotificationDialog extends StatelessWidget {
                           model.rebuild();
                         },
                       ),
+                      ListTile(
+                        leading: Icon(Icons.calendar_today),
+                        title: Text('Date'),
+                        subtitle: Text(
+                          DateFormat.yMMMMd().format(DateTime.fromMillisecondsSinceEpoch(model.item['date'])),
+                        ),
+                        onTap: () async {
+                          print('Selecting date');
+                          _selectDate(context, model);
+                          model.rebuild();
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -236,7 +272,9 @@ class NotificationDialog extends StatelessWidget {
                         if (mode == 'new') {
                           listModel.add(model.item);
                         } else if (mode == 'edit') {
-                          listModel.update(id: model.item['id'], notificationItem: model.item);
+                          listModel.update(
+                              id: model.item['id'],
+                              notificationItem: model.item);
                         }
                       },
                       color: Colors.grey[700],

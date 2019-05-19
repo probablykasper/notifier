@@ -5,6 +5,7 @@ class NotificationDialogModel extends Model {
     'title': '',
     'description': '',
     'noSwipeAway': false,
+    'date': DateTime.now().millisecondsSinceEpoch,
   };
   Map<String, Object> initialItem;
 
