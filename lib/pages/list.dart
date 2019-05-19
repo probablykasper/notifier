@@ -70,7 +70,7 @@ class List extends StatelessWidget {
                     return showDialog(
                       context: context,
                       builder: (BuildContext context) {
-                        return NotificationDialog(mode: 'edit', initialItem: item);
+                        return NotificationDialog(mode: 'edit', initialItem: Map<String, dynamic>.from(item));
                       },
                     );
                   },
