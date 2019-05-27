@@ -71,14 +71,14 @@ class List extends StatelessWidget {
                       context: context,
                       builder: (BuildContext context) {
                         return NotificationDialog(
-                            mode: 'edit',
-                            initialItem: Map<String, dynamic>.from(item));
+                          mode: 'edit',
+                          initialItem: Map<String, dynamic>.from(item),
+                        );
                       },
                     );
                   },
                   child: Container(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 24.0, horizontal: 32.0),
+                    padding: EdgeInsets.symmetric(vertical: 24.0, horizontal: 32.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -116,8 +116,7 @@ class NotificationDialog extends StatelessWidget {
 
   NotificationDialog({this.mode, this.initialItem});
 
-  Future<Null> _selectDate(
-      BuildContext context, NotificationDialogModel model) async {
+  Future<Null> _selectDate(BuildContext context, NotificationDialogModel model) async {
     final firstDate = DateTime.now().subtract(Duration(days: 1));
     var initialDate = DateTime.fromMillisecondsSinceEpoch(model.item['date']);
     if (initialDate.isBefore(firstDate)) {
@@ -144,16 +143,14 @@ class NotificationDialog extends StatelessWidget {
     }
   }
 
-  Future<Null> _selectTime(
-      BuildContext context, NotificationDialogModel model) async {
+  Future<Null> _selectTime(BuildContext context, NotificationDialogModel model) async {
     final TimeOfDay pickedTime = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
     );
 
     if (pickedTime != null && pickedTime != model.item['time']) {
-      final selectedDate =
-          DateTime.fromMillisecondsSinceEpoch(model.item['date']);
+      final selectedDate = DateTime.fromMillisecondsSinceEpoch(model.item['date']);
 
       final newDate = DateTime(
         selectedDate.year,
@@ -190,13 +187,11 @@ class NotificationDialog extends StatelessWidget {
                     children: <Widget>[
                       //* TITLE
                       TextField(
-                        controller:
-                            TextEditingController(text: model.item['title']),
+                        controller: TextEditingController(text: model.item['title']),
                         decoration: InputDecoration(
                           hintText: 'Title',
                           border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 12),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         ),
                         onChanged: (String newValue) {
                           model.item['title'] = newValue;
@@ -204,13 +199,11 @@ class NotificationDialog extends StatelessWidget {
                       ),
                       //* DESCRIPTION
                       TextField(
-                        controller: TextEditingController(
-                            text: model.item['description']),
+                        controller: TextEditingController(text: model.item['description']),
                         decoration: InputDecoration(
                           hintText: 'Description',
                           border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 12),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         ),
                         onChanged: (String newValue) {
                           model.item['description'] = newValue;
@@ -222,8 +215,7 @@ class NotificationDialog extends StatelessWidget {
                         contentPadding: EdgeInsets.symmetric(horizontal: 24),
                         title: Text('Notification cannot be swiped away'),
                         onTap: () {
-                          model.item['noSwipeAway'] =
-                              !model.item['noSwipeAway'];
+                          model.item['noSwipeAway'] = !model.item['noSwipeAway'];
                           model.rebuild();
                         },
                         trailing: Switch(
@@ -239,8 +231,8 @@ class NotificationDialog extends StatelessWidget {
                         title: Text('Date'),
                         subtitle: Text(
                           DateFormat.yMMMMd().format(
-                              DateTime.fromMillisecondsSinceEpoch(
-                                  model.item['date'])),
+                            DateTime.fromMillisecondsSinceEpoch(model.item['date']),
+                          ),
                         ),
                         onTap: () async {
                           print('Selecting date');
@@ -254,8 +246,8 @@ class NotificationDialog extends StatelessWidget {
                         title: Text('Time'),
                         subtitle: Text(
                           DateFormat('h:mm a').format(
-                              DateTime.fromMillisecondsSinceEpoch(
-                                  model.item['date'])),
+                            DateTime.fromMillisecondsSinceEpoch(model.item['date']),
+                          ),
                         ),
                         onTap: () async {
                           print('Selecting time');
@@ -268,8 +260,7 @@ class NotificationDialog extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding:
-                    EdgeInsets.only(left: 12, right: 12, top: 24, bottom: 12),
+                padding: EdgeInsets.only(left: 12, right: 12, top: 24, bottom: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
@@ -286,8 +277,7 @@ class NotificationDialog extends StatelessWidget {
                               Navigator.of(context).pop();
                             },
                             child: Text('Delete'),
-                            materialTapTargetSize:
-                                MaterialTapTargetSize.shrinkWrap,
+                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           ),
                         );
                       else
@@ -313,9 +303,7 @@ class NotificationDialog extends StatelessWidget {
                         if (mode == 'new') {
                           listModel.add(model.item);
                         } else if (mode == 'edit') {
-                          listModel.update(
-                              id: model.item['id'],
-                              notificationItem: model.item);
+                          listModel.update(id: model.item['id'], notificationItem: model.item);
                         }
                       },
                       color: Colors.grey[700],
