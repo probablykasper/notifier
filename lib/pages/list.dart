@@ -186,10 +186,11 @@ class NotificationDialog extends StatelessWidget {
                     //* TITLE
                     TextField(
                       controller: TextEditingController(text: model.item['title']),
+                      // style: TextStyle(fontSize: 24),
                       decoration: InputDecoration(
-                        hintText: 'Title',
+                        labelText: 'Title',
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        contentPadding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
                       ),
                       onChanged: (String newValue) {
                         model.item['title'] = newValue;
@@ -198,10 +199,12 @@ class NotificationDialog extends StatelessWidget {
                     //* DESCRIPTION
                     TextField(
                       controller: TextEditingController(text: model.item['description']),
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
                       decoration: InputDecoration(
-                        hintText: 'Description',
+                        labelText: 'Description',
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        contentPadding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
                       ),
                       onChanged: (String newValue) {
                         model.item['description'] = newValue;
