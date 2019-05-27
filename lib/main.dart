@@ -13,7 +13,7 @@ class App extends StatelessWidget {
       title: 'Notifier',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        fontFamily: 'Rubik',
+        fontFamily: 'Jost',
         brightness: Brightness.dark,
         scaffoldBackgroundColor: Colors.grey[900],
         textSelectionColor: Colors.white24,

@@ -37,7 +37,6 @@ class ListPage extends StatelessWidget {
                 'Notifier',
                 style: TextStyle(
                   color: Globals.blue,
-                  fontWeight: FontWeight.w500,
                 ),
               ),
               titlePadding: EdgeInsets.only(left: 72, bottom: 16),
@@ -87,7 +86,6 @@ class List extends StatelessWidget {
                           item['title'],
                           style: TextStyle(
                             fontSize: 16,
-                            // color: Color(0xff00B0FF),
                             fontWeight: FontWeight.w500,
                           ),
                         ),

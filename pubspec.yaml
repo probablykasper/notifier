@@ -44,8 +44,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  assets:
-   - assets/trees.png
+  # assets:
+  #  - assets/trees.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
@@ -59,10 +59,27 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-    - family: Rubik
+    - family: Jost
       fonts:
-        - asset: assets/Rubik/Rubik-Regular.ttf
-        - asset: assets/Rubik/Rubik-Medium.ttf
+        - asset: assets/Jost/OpenType/Jost-100-Hairline.otf
+          weight: 100
+        - asset: assets/Jost/OpenType/Jost-200-Thin.otf
+          weight: 200
+        - asset: assets/Jost/OpenType/Jost-300-Light.otf
+          weight: 300
+        - asset: assets/Jost/OpenType/Jost-400-Book.otf
+          weight: 400
+        - asset: assets/Jost/OpenType/Jost-500-Medium.otf
+          weight: 500
+        - asset: assets/Jost/OpenType/Jost-600-Semi.otf
+          weight: 600
+        - asset: assets/Jost/OpenType/Jost-700-Bold.otf
+          weight: 700
+        - asset: assets/Jost/OpenType/Jost-800-Heavy.otf
+          weight: 800
+        - asset: assets/Jost/OpenType/Jost-900-Black.otf
+          weight: 900
+          # weight: bold
   #         style: italic
   #   - family: Trajan Pro
   #     fonts:
