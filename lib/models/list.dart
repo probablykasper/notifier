@@ -79,3 +79,4 @@ class ListModel extends Model {
   }
 
 }
+

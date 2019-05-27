@@ -177,86 +177,83 @@ class NotificationDialog extends StatelessWidget {
             contentPadding: EdgeInsets.all(0),
             title: Text('Add notification'),
             children: <Widget>[
-              Padding(
-                padding: EdgeInsets.only(top: 0, bottom: 0),
-                child: Container(
-                  padding: EdgeInsets.only(top: 12, bottom: 0),
-                  width: 600,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      //* TITLE
-                      TextField(
-                        controller: TextEditingController(text: model.item['title']),
-                        decoration: InputDecoration(
-                          hintText: 'Title',
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              Container(
+                padding: EdgeInsets.only(top: 12, bottom: 0),
+                width: 600,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    //* TITLE
+                    TextField(
+                      controller: TextEditingController(text: model.item['title']),
+                      decoration: InputDecoration(
+                        hintText: 'Title',
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      ),
+                      onChanged: (String newValue) {
+                        model.item['title'] = newValue;
+                      },
+                    ),
+                    //* DESCRIPTION
+                    TextField(
+                      controller: TextEditingController(text: model.item['description']),
+                      decoration: InputDecoration(
+                        hintText: 'Description',
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      ),
+                      onChanged: (String newValue) {
+                        model.item['description'] = newValue;
+                      },
+                    ),
+                    //* CANNOT BE SWIPED AWAY?
+                    ListTile(
+                      // this is not a SwitchListTile because that doesn't support padding
+                      contentPadding: EdgeInsets.symmetric(horizontal: 24),
+                      title: Text('Notification cannot be swiped away'),
+                      onTap: () {
+                        model.item['noSwipeAway'] = !model.item['noSwipeAway'];
+                        model.rebuild();
+                      },
+                      trailing: Switch(
+                          value: model.item['noSwipeAway'],
+                          onChanged: (bool newValue) {
+                            model.item['noSwipeAway'] = newValue;
+                            model.rebuild();
+                          }),
+                    ),
+                    ListTile(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 24),
+                      leading: Icon(Icons.calendar_today),
+                      title: Text('Date'),
+                      subtitle: Text(
+                        DateFormat.yMMMMd().format(
+                          DateTime.fromMillisecondsSinceEpoch(model.item['date']),
                         ),
-                        onChanged: (String newValue) {
-                          model.item['title'] = newValue;
-                        },
                       ),
-                      //* DESCRIPTION
-                      TextField(
-                        controller: TextEditingController(text: model.item['description']),
-                        decoration: InputDecoration(
-                          hintText: 'Description',
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      onTap: () async {
+                        print('Selecting date');
+                        _selectDate(context, model);
+                        model.rebuild();
+                      },
+                    ),
+                    ListTile(
+                      contentPadding: EdgeInsets.symmetric(horizontal: 24),
+                      leading: Icon(Icons.schedule),
+                      title: Text('Time'),
+                      subtitle: Text(
+                        DateFormat('h:mm a').format(
+                          DateTime.fromMillisecondsSinceEpoch(model.item['date']),
                         ),
-                        onChanged: (String newValue) {
-                          model.item['description'] = newValue;
-                        },
                       ),
-                      //* CANNOT BE SWIPED AWAY?
-                      ListTile(
-                        // this is not a SwitchListTile because that doesn't support padding
-                        contentPadding: EdgeInsets.symmetric(horizontal: 24),
-                        title: Text('Notification cannot be swiped away'),
-                        onTap: () {
-                          model.item['noSwipeAway'] = !model.item['noSwipeAway'];
-                          model.rebuild();
-                        },
-                        trailing: Switch(
-                            value: model.item['noSwipeAway'],
-                            onChanged: (bool newValue) {
-                              model.item['noSwipeAway'] = newValue;
-                              model.rebuild();
-                            }),
-                      ),
-                      ListTile(
-                        contentPadding: EdgeInsets.symmetric(horizontal: 24),
-                        leading: Icon(Icons.calendar_today),
-                        title: Text('Date'),
-                        subtitle: Text(
-                          DateFormat.yMMMMd().format(
-                            DateTime.fromMillisecondsSinceEpoch(model.item['date']),
-                          ),
-                        ),
-                        onTap: () async {
-                          print('Selecting date');
-                          _selectDate(context, model);
-                          model.rebuild();
-                        },
-                      ),
-                      ListTile(
-                        contentPadding: EdgeInsets.symmetric(horizontal: 24),
-                        leading: Icon(Icons.schedule),
-                        title: Text('Time'),
-                        subtitle: Text(
-                          DateFormat('h:mm a').format(
-                            DateTime.fromMillisecondsSinceEpoch(model.item['date']),
-                          ),
-                        ),
-                        onTap: () async {
-                          print('Selecting time');
-                          _selectTime(context, model);
-                          model.rebuild();
-                        },
-                      ),
-                    ],
-                  ),
+                      onTap: () async {
+                        print('Selecting time');
+                        _selectTime(context, model);
+                        model.rebuild();
+                      },
+                    ),
+                  ],
                 ),
               ),
               Padding(
