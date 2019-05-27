@@ -110,11 +110,23 @@ class List extends StatelessWidget {
   }
 }
 
-class NotificationDialog extends StatelessWidget {
+class NotificationDialog extends StatefulWidget {
   final Map<String, dynamic> initialItem;
   final String mode;
 
   NotificationDialog({this.mode, this.initialItem});
+  
+  @override
+  NotificationDialogState createState() {
+    return NotificationDialogState(mode: mode, initialItem: initialItem);
+  }
+}
+
+class NotificationDialogState extends State<NotificationDialog> {
+  final Map<String, dynamic> initialItem;
+  final String mode;
+
+  NotificationDialogState({this.mode, this.initialItem});
 
   Future<Null> _selectDate(BuildContext context, NotificationDialogModel model) async {
     final firstDate = DateTime.now().subtract(Duration(days: 1));
@@ -164,6 +176,8 @@ class NotificationDialog extends StatelessWidget {
     }
   }
 
+  final formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     print('Building dialog ScopedModel');
@@ -186,21 +200,21 @@ class NotificationDialog extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       //* TITLE
-                      TextField(
-                        controller: TextEditingController(text: model.item['title']),
+                      TextFormField(
                         // style: TextStyle(fontSize: 24),
+                        initialValue: model.item['title'],
                         decoration: InputDecoration(
                           labelText: 'Title',
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
                         ),
-                        onChanged: (String newValue) {
+                        onSaved: (String newValue) {
                           model.item['title'] = newValue;
                         },
                       ),
                       //* DESCRIPTION
-                      TextField(
-                        controller: TextEditingController(text: model.item['description']),
+                      TextFormField(
+                        initialValue: model.item['description'],
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         decoration: InputDecoration(
@@ -208,7 +222,7 @@ class NotificationDialog extends StatelessWidget {
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
                         ),
-                        onChanged: (String newValue) {
+                        onSaved: (String newValue) {
                           model.item['description'] = newValue;
                         },
                       ),
@@ -302,6 +316,7 @@ class NotificationDialog extends StatelessWidget {
                         elevation: 0,
                         onPressed: () {
                           Navigator.of(context).pop();
+                          formKey.currentState.save();
                           if (mode == 'new') {
                             listModel.add(model.item);
                           } else if (mode == 'edit') {
