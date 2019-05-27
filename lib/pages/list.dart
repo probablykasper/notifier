@@ -172,148 +172,151 @@ class NotificationDialog extends StatelessWidget {
       child: ScopedModelDescendant<NotificationDialogModel>(
         builder: (context, child, model) {
           print('Building dialog ScopedModelDescendant');
-          return SimpleDialog(
-            // everything should have a horizontal padding of 24
-            contentPadding: EdgeInsets.all(0),
-            title: Text('Add notification'),
-            children: <Widget>[
-              Container(
-                padding: EdgeInsets.only(top: 12, bottom: 0),
-                width: 600,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    //* TITLE
-                    TextField(
-                      controller: TextEditingController(text: model.item['title']),
-                      // style: TextStyle(fontSize: 24),
-                      decoration: InputDecoration(
-                        labelText: 'Title',
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
-                      ),
-                      onChanged: (String newValue) {
-                        model.item['title'] = newValue;
-                      },
-                    ),
-                    //* DESCRIPTION
-                    TextField(
-                      controller: TextEditingController(text: model.item['description']),
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      decoration: InputDecoration(
-                        labelText: 'Description',
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
-                      ),
-                      onChanged: (String newValue) {
-                        model.item['description'] = newValue;
-                      },
-                    ),
-                    //* CANNOT BE SWIPED AWAY?
-                    ListTile(
-                      // this is not a SwitchListTile because that doesn't support padding
-                      contentPadding: EdgeInsets.symmetric(horizontal: 24),
-                      title: Text('Notification cannot be swiped away'),
-                      onTap: () {
-                        model.item['noSwipeAway'] = !model.item['noSwipeAway'];
-                        model.rebuild();
-                      },
-                      trailing: Switch(
-                          value: model.item['noSwipeAway'],
-                          onChanged: (bool newValue) {
-                            model.item['noSwipeAway'] = newValue;
-                            model.rebuild();
-                          }),
-                    ),
-                    ListTile(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 24),
-                      leading: Icon(Icons.calendar_today),
-                      title: Text('Date'),
-                      subtitle: Text(
-                        DateFormat.yMMMMd().format(
-                          DateTime.fromMillisecondsSinceEpoch(model.item['date']),
+          return Form(
+            key: formKey,
+            child: SimpleDialog(
+              // everything should have a horizontal padding of 24
+              contentPadding: EdgeInsets.all(0),
+              title: Text('Add notification'),
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.only(top: 12, bottom: 0),
+                  width: 600,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      //* TITLE
+                      TextField(
+                        controller: TextEditingController(text: model.item['title']),
+                        // style: TextStyle(fontSize: 24),
+                        decoration: InputDecoration(
+                          labelText: 'Title',
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
                         ),
+                        onChanged: (String newValue) {
+                          model.item['title'] = newValue;
+                        },
                       ),
-                      onTap: () async {
-                        print('Selecting date');
-                        _selectDate(context, model);
-                        model.rebuild();
-                      },
-                    ),
-                    ListTile(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 24),
-                      leading: Icon(Icons.schedule),
-                      title: Text('Time'),
-                      subtitle: Text(
-                        DateFormat('h:mm a').format(
-                          DateTime.fromMillisecondsSinceEpoch(model.item['date']),
+                      //* DESCRIPTION
+                      TextField(
+                        controller: TextEditingController(text: model.item['description']),
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        decoration: InputDecoration(
+                          labelText: 'Description',
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
                         ),
+                        onChanged: (String newValue) {
+                          model.item['description'] = newValue;
+                        },
                       ),
-                      onTap: () async {
-                        print('Selecting time');
-                        _selectTime(context, model);
-                        model.rebuild();
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 12, right: 12, top: 24, bottom: 12),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    //* DELETE
-                    (() {
-                      if (mode == 'edit')
-                        return Padding(
-                          padding: EdgeInsets.only(right: 12),
-                          child: MaterialButton(
-                            minWidth: 85.0,
-                            elevation: 0,
-                            onPressed: () {
-                              listModel.delete(model.item['id']);
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('Delete'),
-                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      //* CANNOT BE SWIPED AWAY?
+                      ListTile(
+                        // this is not a SwitchListTile because that doesn't support padding
+                        contentPadding: EdgeInsets.symmetric(horizontal: 24),
+                        title: Text('Notification cannot be swiped away'),
+                        onTap: () {
+                          model.item['noSwipeAway'] = !model.item['noSwipeAway'];
+                          model.rebuild();
+                        },
+                        trailing: Switch(
+                            value: model.item['noSwipeAway'],
+                            onChanged: (bool newValue) {
+                              model.item['noSwipeAway'] = newValue;
+                              model.rebuild();
+                            }),
+                      ),
+                      ListTile(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 24),
+                        leading: Icon(Icons.calendar_today),
+                        title: Text('Date'),
+                        subtitle: Text(
+                          DateFormat.yMMMMd().format(
+                            DateTime.fromMillisecondsSinceEpoch(model.item['date']),
                           ),
-                        );
-                      else
-                        return Container();
-                    })(),
-                    //* CANCEL
-                    MaterialButton(
-                      minWidth: 90.0,
-                      elevation: 0,
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Text('Cancel'),
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    Container(width: 12),
-                    //* SAVE
-                    MaterialButton(
-                      minWidth: 90.0,
-                      elevation: 0,
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        if (mode == 'new') {
-                          listModel.add(model.item);
-                        } else if (mode == 'edit') {
-                          listModel.update(id: model.item['id'], notificationItem: model.item);
-                        }
-                      },
-                      color: Colors.grey[700],
-                      child: Text('Save'),
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                  ],
+                        ),
+                        onTap: () async {
+                          print('Selecting date');
+                          _selectDate(context, model);
+                          model.rebuild();
+                        },
+                      ),
+                      ListTile(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 24),
+                        leading: Icon(Icons.schedule),
+                        title: Text('Time'),
+                        subtitle: Text(
+                          DateFormat('h:mm a').format(
+                            DateTime.fromMillisecondsSinceEpoch(model.item['date']),
+                          ),
+                        ),
+                        onTap: () async {
+                          print('Selecting time');
+                          _selectTime(context, model);
+                          model.rebuild();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                Padding(
+                  padding: EdgeInsets.only(left: 12, right: 12, top: 24, bottom: 12),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      //* DELETE
+                      (() {
+                        if (mode == 'edit')
+                          return Padding(
+                            padding: EdgeInsets.only(right: 12),
+                            child: MaterialButton(
+                              minWidth: 85.0,
+                              elevation: 0,
+                              onPressed: () {
+                                listModel.delete(model.item['id']);
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('Delete'),
+                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                          );
+                        else
+                          return Container();
+                      })(),
+                      //* CANCEL
+                      MaterialButton(
+                        minWidth: 90.0,
+                        elevation: 0,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('Cancel'),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      Container(width: 12),
+                      //* SAVE
+                      MaterialButton(
+                        minWidth: 90.0,
+                        elevation: 0,
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          if (mode == 'new') {
+                            listModel.add(model.item);
+                          } else if (mode == 'edit') {
+                            listModel.update(id: model.item['id'], notificationItem: model.item);
+                          }
+                        },
+                        color: Colors.grey[700],
+                        child: Text('Save'),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           );
         },
       ),
