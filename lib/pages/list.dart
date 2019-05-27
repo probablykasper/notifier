@@ -175,31 +175,15 @@ class NotificationDialog extends StatelessWidget {
       child: ScopedModelDescendant<NotificationDialogModel>(
         builder: (context, child, model) {
           print('Building dialog ScopedModelDescendant');
-          double bp = 12.0;
           return SimpleDialog(
-            titlePadding:
-                EdgeInsets.fromLTRB(24.0 - bp, 24.0 - bp, 24.0 - bp, 0.0),
+            // everything should have a horizontal padding of 24
             contentPadding: EdgeInsets.all(0),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.only(left: bp),
-                  child: Text(
-                    'Add notification',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            title: Text('Add notification'),
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(top: 12.0 - bp, bottom: 16),
+                padding: EdgeInsets.only(top: 0, bottom: 0),
                 child: Container(
-                  padding: EdgeInsets.only(top: 8, bottom: 12),
+                  padding: EdgeInsets.only(top: 12, bottom: 0),
                   width: 600,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -212,7 +196,7 @@ class NotificationDialog extends StatelessWidget {
                           hintText: 'Title',
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 12),
+                              horizontal: 24, vertical: 12),
                         ),
                         onChanged: (String newValue) {
                           model.item['title'] = newValue;
@@ -226,22 +210,31 @@ class NotificationDialog extends StatelessWidget {
                           hintText: 'Description',
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 12),
+                              horizontal: 24, vertical: 12),
                         ),
                         onChanged: (String newValue) {
                           model.item['description'] = newValue;
                         },
                       ),
                       //* CANNOT BE SWIPED AWAY?
-                      SwitchListTile(
+                      ListTile(
+                        // this is not a SwitchListTile because that doesn't support padding
+                        contentPadding: EdgeInsets.symmetric(horizontal: 24),
                         title: Text('Notification cannot be swiped away'),
-                        value: model.item['noSwipeAway'],
-                        onChanged: (bool newValue) {
-                          model.item['noSwipeAway'] = newValue;
+                        onTap: () {
+                          model.item['noSwipeAway'] =
+                              !model.item['noSwipeAway'];
                           model.rebuild();
                         },
+                        trailing: Switch(
+                            value: model.item['noSwipeAway'],
+                            onChanged: (bool newValue) {
+                              model.item['noSwipeAway'] = newValue;
+                              model.rebuild();
+                            }),
                       ),
                       ListTile(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 24),
                         leading: Icon(Icons.calendar_today),
                         title: Text('Date'),
                         subtitle: Text(
@@ -256,6 +249,7 @@ class NotificationDialog extends StatelessWidget {
                         },
                       ),
                       ListTile(
+                        contentPadding: EdgeInsets.symmetric(horizontal: 24),
                         leading: Icon(Icons.schedule),
                         title: Text('Time'),
                         subtitle: Text(
@@ -274,7 +268,8 @@ class NotificationDialog extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.all(12),
+                padding:
+                    EdgeInsets.only(left: 12, right: 12, top: 24, bottom: 12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
