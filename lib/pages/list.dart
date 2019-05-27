@@ -193,24 +193,6 @@ class NotificationDialog extends StatelessWidget {
                     ),
                   ),
                 ),
-                //* DELETE
-                (() {
-                  if (mode == 'edit')
-                    return InkWell(
-                      onTap: () {
-                        listModel.delete(model.item['id']);
-                        Navigator.of(context).pop();
-                      },
-                      splashColor: Globals.defaultSplashColor,
-                      borderRadius: BorderRadius.circular(50),
-                      child: Padding(
-                        padding: EdgeInsets.all(bp),
-                        child: Icon(Icons.delete),
-                      ),
-                    );
-                  else
-                    return Container();
-                })(),
               ],
             ),
             children: <Widget>[
@@ -296,6 +278,26 @@ class NotificationDialog extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
+                    //* DELETE
+                    (() {
+                      if (mode == 'edit')
+                        return Padding(
+                          padding: EdgeInsets.only(right: 12),
+                          child: MaterialButton(
+                            minWidth: 85.0,
+                            elevation: 0,
+                            onPressed: () {
+                              listModel.delete(model.item['id']);
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('Delete'),
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                          ),
+                        );
+                      else
+                        return Container();
+                    })(),
                     //* CANCEL
                     MaterialButton(
                       minWidth: 90.0,
