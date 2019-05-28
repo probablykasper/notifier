@@ -115,7 +115,7 @@ class NotificationDialog extends StatefulWidget {
   final String mode;
 
   NotificationDialog({this.mode, this.initialItem});
-  
+
   @override
   NotificationDialogState createState() {
     return NotificationDialogState(mode: mode, initialItem: initialItem);
@@ -178,6 +178,19 @@ class NotificationDialogState extends State<NotificationDialog> {
 
   final formKey = GlobalKey<FormState>();
 
+  FocusNode descriptionFocusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    this.descriptionFocusNode = FocusNode();
+  }
+  @override
+  void dispose() {
+    this.descriptionFocusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     print('Building dialog ScopedModel');
@@ -186,6 +199,38 @@ class NotificationDialogState extends State<NotificationDialog> {
       child: ScopedModelDescendant<NotificationDialogModel>(
         builder: (context, child, model) {
           print('Building dialog ScopedModelDescendant');
+          //* TITLE
+          final title = TextFormField(
+            // style: TextStyle(fontSize: 24),
+            initialValue: model.item['title'],
+            textInputAction: TextInputAction.next,
+            decoration: InputDecoration(
+              labelText: 'Title',
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
+            ),
+            onSaved: (String newValue) {
+              model.item['title'] = newValue;
+            },
+            onFieldSubmitted: (String newValue) {
+              FocusScope.of(context).requestFocus(descriptionFocusNode);
+            },
+          );
+          //* DESCRIPTION
+          final description = TextFormField(
+            initialValue: model.item['description'],
+            keyboardType: TextInputType.multiline,
+            maxLines: null,
+            decoration: InputDecoration(
+              labelText: 'Description',
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
+            ),
+            onSaved: (String newValue) {
+              model.item['description'] = newValue;
+            },
+            focusNode: descriptionFocusNode,
+          );
           return Form(
             key: formKey,
             child: SimpleDialog(
@@ -199,33 +244,8 @@ class NotificationDialogState extends State<NotificationDialog> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      //* TITLE
-                      TextFormField(
-                        // style: TextStyle(fontSize: 24),
-                        initialValue: model.item['title'],
-                        decoration: InputDecoration(
-                          labelText: 'Title',
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
-                        ),
-                        onSaved: (String newValue) {
-                          model.item['title'] = newValue;
-                        },
-                      ),
-                      //* DESCRIPTION
-                      TextFormField(
-                        initialValue: model.item['description'],
-                        keyboardType: TextInputType.multiline,
-                        maxLines: null,
-                        decoration: InputDecoration(
-                          labelText: 'Description',
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
-                        ),
-                        onSaved: (String newValue) {
-                          model.item['description'] = newValue;
-                        },
-                      ),
+                      title,
+                      description,
                       //* CANNOT BE SWIPED AWAY?
                       ListTile(
                         // this is not a SwitchListTile because that doesn't support padding
