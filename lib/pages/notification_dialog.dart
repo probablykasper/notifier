@@ -26,53 +26,88 @@ class NotificationDialogState extends State<NotificationDialog> {
 
   NotificationDialogState({this.mode, this.initialItem, this.listModel});
 
-  Future<Null> _selectDate(BuildContext context, NotificationDialogModel model) async {
+  Future _pickDateTime(BuildContext context, NotificationDialogModel model) async {
     final firstDate = DateTime.now().subtract(Duration(days: 1));
-    var initialDate = DateTime.fromMillisecondsSinceEpoch(model.item['date']);
-    if (initialDate.isBefore(firstDate)) {
-      initialDate = firstDate;
+    var initialDateTime = DateTime.fromMillisecondsSinceEpoch(model.item['date']);
+    if (initialDateTime.isBefore(firstDate)) {
+      initialDateTime = firstDate;
     }
 
     final DateTime pickedDate = await showDatePicker(
       context: context,
-      initialDate: initialDate,
+      initialDate: initialDateTime,
       firstDate: firstDate,
       lastDate: DateTime(3000),
     );
 
-    if (pickedDate != null && pickedDate != model.item['date']) {
-      final newDate = DateTime(
-        pickedDate.year,
-        pickedDate.month,
-        pickedDate.day,
-        initialDate.hour,
-        initialDate.minute,
-      );
-      model.item['date'] = newDate.millisecondsSinceEpoch;
-      model.rebuild();
-    }
-  }
+    if (pickedDate == null) return;
 
-  Future<Null> _selectTime(BuildContext context, NotificationDialogModel model) async {
     final TimeOfDay pickedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      // initialTime: TimeOfDay.now(),
+      initialTime: TimeOfDay.fromDateTime(initialDateTime),
     );
 
-    if (pickedTime != null && pickedTime != model.item['time']) {
-      final selectedDate = DateTime.fromMillisecondsSinceEpoch(model.item['date']);
+    if (pickedTime == null) return;
 
-      final newDate = DateTime(
-        selectedDate.year,
-        selectedDate.month,
-        selectedDate.day,
-        pickedTime.hour,
-        pickedTime.minute,
-      );
-      model.item['date'] = newDate.millisecondsSinceEpoch;
-      model.rebuild();
-    }
+    final newDate = DateTime(
+      pickedDate.year,
+      pickedDate.month,
+      pickedDate.day,
+      pickedTime.hour,
+      pickedTime.minute,
+    );
+    model.item['date'] = newDate.millisecondsSinceEpoch;
+    model.rebuild();
   }
+
+  // Future<Null> _selectDate(BuildContext context, NotificationDialogModel model) async {
+  //   final firstDate = DateTime.now().subtract(Duration(days: 1));
+  //   var initialDate = DateTime.fromMillisecondsSinceEpoch(model.item['date']);
+  //   if (initialDate.isBefore(firstDate)) {
+  //     initialDate = firstDate;
+  //   }
+
+  //   final DateTime pickedDate = await showDatePicker(
+  //     context: context,
+  //     initialDate: initialDate,
+  //     firstDate: firstDate,
+  //     lastDate: DateTime(3000),
+  //   );
+
+  //   if (pickedDate != null && pickedDate != model.item['date']) {
+  //     final newDate = DateTime(
+  //       pickedDate.year,
+  //       pickedDate.month,
+  //       pickedDate.day,
+  //       initialDate.hour,
+  //       initialDate.minute,
+  //     );
+  //     model.item['date'] = newDate.millisecondsSinceEpoch;
+  //     model.rebuild();
+  //   }
+  // }
+
+  // Future<Null> _selectTime(BuildContext context, NotificationDialogModel model) async {
+  //   final TimeOfDay pickedTime = await showTimePicker(
+  //     context: context,
+  //     initialTime: TimeOfDay.now(),
+  //   );
+
+  //   if (pickedTime != null && pickedTime != model.item['time']) {
+  //     final selectedDate = DateTime.fromMillisecondsSinceEpoch(model.item['date']);
+
+  //     final newDate = DateTime(
+  //       selectedDate.year,
+  //       selectedDate.month,
+  //       selectedDate.day,
+  //       pickedTime.hour,
+  //       pickedTime.minute,
+  //     );
+  //     model.item['date'] = newDate.millisecondsSinceEpoch;
+  //     model.rebuild();
+  //   }
+  // }
 
   final formKey = GlobalKey<FormState>();
 
@@ -163,30 +198,16 @@ class NotificationDialogState extends State<NotificationDialog> {
                       ListTile(
                         contentPadding: EdgeInsets.symmetric(horizontal: 24),
                         leading: Icon(Icons.calendar_today),
-                        title: Text('Date'),
+                        title: Text('Time'),
                         subtitle: Text(
-                          DateFormat.yMMMMd().format(
+                          DateFormat("MMMM d, y 'at' h:mm a").format(
                             DateTime.fromMillisecondsSinceEpoch(model.item['date']),
                           ),
                         ),
                         onTap: () async {
                           print('Selecting date');
-                          _selectDate(context, model);
-                          model.rebuild();
-                        },
-                      ),
-                      ListTile(
-                        contentPadding: EdgeInsets.symmetric(horizontal: 24),
-                        leading: Icon(Icons.schedule),
-                        title: Text('Time'),
-                        subtitle: Text(
-                          DateFormat('h:mm a').format(
-                            DateTime.fromMillisecondsSinceEpoch(model.item['date']),
-                          ),
-                        ),
-                        onTap: () async {
-                          print('Selecting time');
-                          _selectTime(context, model);
+                          // _selectDate(context, model);
+                          _pickDateTime(context, model);
                           model.rebuild();
                         },
                       ),
@@ -204,8 +225,6 @@ class NotificationDialogState extends State<NotificationDialog> {
                           return Padding(
                             padding: EdgeInsets.only(right: 12),
                             child: MaterialButton(
-                              minWidth: 85.0,
-                              elevation: 0,
                               onPressed: () {
                                 listModel.delete(model.item['id']);
                                 Navigator.of(context).pop();
@@ -219,8 +238,6 @@ class NotificationDialogState extends State<NotificationDialog> {
                       })(),
                       //* CANCEL
                       MaterialButton(
-                        minWidth: 90.0,
-                        elevation: 0,
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
@@ -230,7 +247,6 @@ class NotificationDialogState extends State<NotificationDialog> {
                       Container(width: 12),
                       //* SAVE
                       MaterialButton(
-                        minWidth: 90.0,
                         elevation: 0,
                         onPressed: () {
                           Navigator.of(context).pop();

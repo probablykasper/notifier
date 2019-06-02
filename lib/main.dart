@@ -20,6 +20,9 @@ class App extends StatelessWidget {
         textSelectionHandleColor: Globals.blue,
         accentColor: Colors.white,
         toggleableActiveColor: Globals.blue,
+        buttonTheme: ButtonThemeData(
+          minWidth: 85,
+        ),
       ),
       home: ListPage(),
     );
