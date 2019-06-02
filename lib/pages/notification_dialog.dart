@@ -61,54 +61,6 @@ class NotificationDialogState extends State<NotificationDialog> {
     model.rebuild();
   }
 
-  // Future<Null> _selectDate(BuildContext context, NotificationDialogModel model) async {
-  //   final firstDate = DateTime.now().subtract(Duration(days: 1));
-  //   var initialDate = DateTime.fromMillisecondsSinceEpoch(model.item['date']);
-  //   if (initialDate.isBefore(firstDate)) {
-  //     initialDate = firstDate;
-  //   }
-
-  //   final DateTime pickedDate = await showDatePicker(
-  //     context: context,
-  //     initialDate: initialDate,
-  //     firstDate: firstDate,
-  //     lastDate: DateTime(3000),
-  //   );
-
-  //   if (pickedDate != null && pickedDate != model.item['date']) {
-  //     final newDate = DateTime(
-  //       pickedDate.year,
-  //       pickedDate.month,
-  //       pickedDate.day,
-  //       initialDate.hour,
-  //       initialDate.minute,
-  //     );
-  //     model.item['date'] = newDate.millisecondsSinceEpoch;
-  //     model.rebuild();
-  //   }
-  // }
-
-  // Future<Null> _selectTime(BuildContext context, NotificationDialogModel model) async {
-  //   final TimeOfDay pickedTime = await showTimePicker(
-  //     context: context,
-  //     initialTime: TimeOfDay.now(),
-  //   );
-
-  //   if (pickedTime != null && pickedTime != model.item['time']) {
-  //     final selectedDate = DateTime.fromMillisecondsSinceEpoch(model.item['date']);
-
-  //     final newDate = DateTime(
-  //       selectedDate.year,
-  //       selectedDate.month,
-  //       selectedDate.day,
-  //       pickedTime.hour,
-  //       pickedTime.minute,
-  //     );
-  //     model.item['date'] = newDate.millisecondsSinceEpoch;
-  //     model.rebuild();
-  //   }
-  // }
-
   final formKey = GlobalKey<FormState>();
 
   FocusNode descriptionFocusNode;
