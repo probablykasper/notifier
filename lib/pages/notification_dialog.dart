@@ -36,28 +36,29 @@ class NotificationDialogState extends State<NotificationDialog> {
     }
 
     final DateTime pickedDate = await showDatePicker(
-        context: context,
-        initialDate: initialDateTime,
-        firstDate: firstDate,
-        lastDate: DateTime(3000),
-        builder: (BuildContext context, Widget child) {
-          return FittedBox(
-            child: Theme(
-            child: child,
-            data: Theme.of(context),
-            // data: ThemeData(
-            //   primaryColor: Colors.purple[300],
-            // ),
-            // ),
-          );
-        });
+      context: context,
+      initialDate: initialDateTime,
+      firstDate: firstDate,
+      lastDate: DateTime(3000),
+      builder: (BuildContext context, Widget child) {
+        return Theme(
+          child: child,
+          data: globals.pickerTheme,
+        );
+      },
+    );
 
     if (pickedDate == null) return;
 
     final TimeOfDay pickedTime = await showTimePicker(
       context: context,
-      // initialTime: TimeOfDay.now(),
       initialTime: TimeOfDay.fromDateTime(initialDateTime),
+      builder: (BuildContext context, Widget child) {
+        return Theme(
+          child: child,
+          data: globals.pickerTheme,
+        );
+      },
     );
 
     if (pickedTime == null) return;
