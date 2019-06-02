@@ -15,16 +15,18 @@ class App extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Jost',
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: Globals.backgroundColor,
+        scaffoldBackgroundColor: globals.backgroundColor,
         textSelectionColor: Colors.white24,
-        textSelectionHandleColor: Globals.blue,
+        textSelectionHandleColor: globals.blue,
         accentColor: Colors.white,
-        toggleableActiveColor: Globals.blue,
+        toggleableActiveColor: globals.blue,
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           foregroundColor: Colors.white,
           backgroundColor: Colors.grey[900],
         ),
         buttonColor: Colors.yellowAccent,
+        highlightColor: globals.highlightColor,
+        splashColor: globals.splashColor,
         buttonTheme: ButtonThemeData(
           minWidth: 85,
           shape: RoundedRectangleBorder(
@@ -37,6 +39,7 @@ class App extends StatelessWidget {
           ),
         ),
         dialogTheme: DialogTheme(
+          backgroundColor: globals.grey[2],
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(4),
           ),

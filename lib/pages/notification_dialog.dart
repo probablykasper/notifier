@@ -42,8 +42,9 @@ class NotificationDialogState extends State<NotificationDialog> {
         lastDate: DateTime(3000),
         builder: (BuildContext context, Widget child) {
           return FittedBox(
-            // child: Theme(
+            child: Theme(
             child: child,
+            data: Theme.of(context),
             // data: ThemeData(
             //   primaryColor: Colors.purple[300],
             // ),
@@ -189,11 +190,13 @@ class NotificationDialogState extends State<NotificationDialog> {
                           return Padding(
                             padding: EdgeInsets.only(right: 12),
                             child: MaterialButton(
+                              highlightColor: globals.highlightColor,
+                              splashColor: Colors.transparent,
                               onPressed: () {
                                 listModel.delete(model.item['id']);
                                 Navigator.of(context).pop();
                               },
-                              child: Text('Delete'),
+                              child: Text('Delete', style: globals.buttonTextStyle),
                               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             ),
                           );
@@ -202,15 +205,18 @@ class NotificationDialogState extends State<NotificationDialog> {
                       })(),
                       //* CANCEL
                       MaterialButton(
+                        highlightColor: globals.highlightColor,
+                        splashColor: Colors.transparent,
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text('Cancel'),
+                        child: Text('Cancel', style: globals.buttonTextStyle),
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       Container(width: 12),
                       //* SAVE
                       MaterialButton(
+                        splashColor: Colors.transparent,
                         elevation: 0,
                         onPressed: () {
                           Navigator.of(context).pop();
@@ -221,9 +227,10 @@ class NotificationDialogState extends State<NotificationDialog> {
                             listModel.update(id: model.item['id'], notificationItem: model.item);
                           }
                         },
-                        color: Globals.primaryButtonColor,
-                        textColor:Globals.primaryButtonTextColor,
-                        child: Text('Save'),
+                        color: globals.primaryButtonColor,
+                        textColor: globals.primaryButtonTextColor,
+                        highlightColor: globals.highlightColor,
+                        child: Text('Save', style: globals.buttonTextStyle),
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                     ],

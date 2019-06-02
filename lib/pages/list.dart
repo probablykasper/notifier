@@ -31,11 +31,11 @@ class ListPage extends StatelessWidget {
             floating: false,
             snap: false,
             expandedHeight: 200.0,
-            backgroundColor: Globals.appBarBackgroundColor,
+            backgroundColor: globals.appBarBackgroundColor,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 'Notifier',
-                style: Globals.appTitleStyle,
+                style: globals.appTitleStyle,
               ),
               titlePadding: EdgeInsets.only(left: 72, bottom: 16),
             ),
@@ -60,8 +60,8 @@ class List extends StatelessWidget {
             delegate: SliverChildListDelegate(
               listModel.itemsAsList.map((item) {
                 return InkWell(
-                  splashColor: Globals.splashColor,
-                  highlightColor: Globals.highlightColor,
+                  splashColor: globals.splashColor,
+                  highlightColor: globals.highlightColor,
                   onTap: () {
                     print("Someone tapped me and it felt great");
                     return showDialog(
