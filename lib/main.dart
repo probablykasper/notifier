@@ -15,13 +15,31 @@ class App extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Jost',
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: Colors.grey[900],
+        scaffoldBackgroundColor: Globals.backgroundColor,
         textSelectionColor: Colors.white24,
         textSelectionHandleColor: Globals.blue,
         accentColor: Colors.white,
         toggleableActiveColor: Globals.blue,
+        floatingActionButtonTheme: FloatingActionButtonThemeData(
+          foregroundColor: Colors.white,
+          backgroundColor: Colors.grey[900],
+        ),
+        buttonColor: Colors.yellowAccent,
         buttonTheme: ButtonThemeData(
           minWidth: 85,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+        cardTheme: CardTheme(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4),
+          ),
+        ),
+        dialogTheme: DialogTheme(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4),
+          ),
         ),
       ),
       home: ListPage(),

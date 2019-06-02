@@ -22,23 +22,20 @@ class ListPage extends StatelessWidget {
           );
         },
         child: Icon(Icons.add),
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.grey[800],
       ),
       body: CustomScrollView(
         slivers: <Widget>[
-          const SliverAppBar(
+          SliverAppBar(
             pinned: true,
             // backgroundColor: Colors.black26,
             floating: false,
             snap: false,
             expandedHeight: 200.0,
+            backgroundColor: Globals.appBarBackgroundColor,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 'Notifier',
-                style: TextStyle(
-                  color: Globals.blue,
-                ),
+                style: Globals.appTitleStyle,
               ),
               titlePadding: EdgeInsets.only(left: 72, bottom: 16),
             ),
@@ -63,7 +60,8 @@ class List extends StatelessWidget {
             delegate: SliverChildListDelegate(
               listModel.itemsAsList.map((item) {
                 return InkWell(
-                  splashColor: Globals.defaultSplashColor,
+                  splashColor: Globals.splashColor,
+                  highlightColor: Globals.highlightColor,
                   onTap: () {
                     print("Someone tapped me and it felt great");
                     return showDialog(

@@ -6,6 +6,8 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:intl/intl.dart';
 import 'package:notifier/models/list.dart';
 
+import 'package:notifier/globals.dart';
+
 class NotificationDialog extends StatefulWidget {
   final Map<String, dynamic> initialItem;
   final String mode;
@@ -34,11 +36,20 @@ class NotificationDialogState extends State<NotificationDialog> {
     }
 
     final DateTime pickedDate = await showDatePicker(
-      context: context,
-      initialDate: initialDateTime,
-      firstDate: firstDate,
-      lastDate: DateTime(3000),
-    );
+        context: context,
+        initialDate: initialDateTime,
+        firstDate: firstDate,
+        lastDate: DateTime(3000),
+        builder: (BuildContext context, Widget child) {
+          return FittedBox(
+            // child: Theme(
+            child: child,
+            // data: ThemeData(
+            //   primaryColor: Colors.purple[300],
+            // ),
+            // ),
+          );
+        });
 
     if (pickedDate == null) return;
 
@@ -70,6 +81,7 @@ class NotificationDialogState extends State<NotificationDialog> {
     super.initState();
     this.descriptionFocusNode = FocusNode();
   }
+
   @override
   void dispose() {
     this.descriptionFocusNode.dispose();
@@ -209,7 +221,8 @@ class NotificationDialogState extends State<NotificationDialog> {
                             listModel.update(id: model.item['id'], notificationItem: model.item);
                           }
                         },
-                        color: Colors.grey[700],
+                        color: Globals.primaryButtonColor,
+                        textColor:Globals.primaryButtonTextColor,
                         child: Text('Save'),
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
