@@ -195,6 +195,11 @@ class NotificationDialogState extends State<NotificationDialog> {
                                   },
                                   value: state.value,
                                   elevation: 16,
+                                  style: TextStyle(
+                                    inherit: true,
+                                    fontFamily: 'Jost',
+                                    fontSize: 15,
+                                  ),
                                   items: [
                                     DropdownMenuItem(
                                       value: 'never',
@@ -216,13 +221,14 @@ class NotificationDialogState extends State<NotificationDialog> {
                                 );
                               },
                             ),
+                            Container(width: 6),
                             (() {
                               print(model.item['repeat']);
                               print(model.item['repeatEvery']);
                               if (model.item['repeat'] == 'never') {
                                 return Container();
                               } else {
-                                return Text('every');
+                                return Text('every', style: TextStyle(fontSize: 15));
                               }
                             })(),
                             Container(width: 6),
@@ -231,20 +237,24 @@ class NotificationDialogState extends State<NotificationDialog> {
                                 return Container();
                               } else {
                                 return Container(
-                                  width: 50,
+                                  width: 35,
                                   child: TextFormField(
                                     initialValue: model.item['repeatEvery'].toString(),
                                     onSaved: (String newValue) {
                                       print('every: $newValue');
                                       model.item['repeatEvery'] = int.parse(newValue);
                                     },
+                                    textAlign: TextAlign.center,
                                     keyboardType: TextInputType.numberWithOptions(
                                       signed: false,
                                       decimal: false,
                                     ),
-                                    inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                                    inputFormatters: [
+                                      WhitelistingTextInputFormatter.digitsOnly,
+                                      LengthLimitingTextInputFormatter(3),
+                                    ],
                                     decoration: InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(horizontal: 6),
+                                      contentPadding: EdgeInsets.symmetric(vertical: 4),
                                     ),
                                   ),
                                 );
@@ -253,13 +263,13 @@ class NotificationDialogState extends State<NotificationDialog> {
                             Container(width: 6),
                             (() {
                               if (model.item['repeat'] == 'daily') {
-                                return Text('days');
+                                return Text('days', style: TextStyle(fontSize: 15));
                               } else if (model.item['repeat'] == 'weekly') {
-                                return Text('weeks');
+                                return Text('weeks', style: TextStyle(fontSize: 15));
                               } else if (model.item['repeat'] == 'monthly') {
-                                return Text('months');
+                                return Text('months', style: TextStyle(fontSize: 15));
                               } else if (model.item['repeat'] == 'yearly') {
-                                return Text('years');
+                                return Text('years', style: TextStyle(fontSize: 15));
                               } else {
                                 return Container();
                               }
