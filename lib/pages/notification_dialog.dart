@@ -277,6 +277,28 @@ class NotificationDialogState extends State<NotificationDialog> {
                           ],
                         ),
                       ),
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 24),
+                        child: (() {
+                          if (model.item['repeat'] == 'weekly') {
+                            List<Checkbox> checkboxes = [];
+                            model.item['weekdays'].asMap().forEach((index, value) {
+                              checkboxes.add(
+                                Checkbox(
+                                  value: value,
+                                  onChanged: (bool newValue) {
+                                    model.item['weekdays'][index] = newValue;
+                                    model.rebuild();
+                                  },
+                                ),
+                              );
+                            });
+                            return Row(children: checkboxes);
+                          } else {
+                            return Container();
+                          }
+                        })(),
+                      )
                     ],
                   ),
                 ),
