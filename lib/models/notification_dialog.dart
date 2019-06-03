@@ -4,6 +4,8 @@ class NotificationDialogModel extends Model {
   Map<String, Object> item = {
     'title': '',
     'description': '',
+    'repeat': 'never',
+    'repeatEvery': 1,
     'noSwipeAway': false,
     'date': DateTime.now().millisecondsSinceEpoch,
   };

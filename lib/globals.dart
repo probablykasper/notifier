@@ -47,6 +47,7 @@ class Globals {
         splashColor: globals.splashColor,
         buttonTheme: ButtonThemeData(
           minWidth: 85,
+          height: 35,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(4),
           ),

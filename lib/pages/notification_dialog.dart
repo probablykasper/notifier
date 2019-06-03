@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:notifier/models/notification_dialog.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -100,7 +101,6 @@ class NotificationDialogState extends State<NotificationDialog> {
           print('Building dialog ScopedModelDescendant');
           //* TITLE
           final title = TextFormField(
-            // style: TextStyle(fontSize: 24),
             initialValue: model.item['title'],
             textInputAction: TextInputAction.next,
             decoration: InputDecoration(
@@ -172,10 +172,90 @@ class NotificationDialogState extends State<NotificationDialog> {
                         ),
                         onTap: () async {
                           print('Selecting date');
-                          // _selectDate(context, model);
                           _pickDateTime(context, model);
                           model.rebuild();
                         },
+                      ),
+                      //* REPEAT
+                      Container(
+                        padding: EdgeInsets.symmetric(horizontal: 24),
+                        child: Row(
+                          children: <Widget>[
+                            DropdownButton(
+                              onChanged: (newValue) {
+                                model.item['repeat'] = newValue;
+                                model.rebuild();
+                              },
+                              value: model.item['repeat'],
+                              elevation: 16,
+                              // underline: Container(),
+                              items: [
+                                DropdownMenuItem(
+                                  value: 'never',
+                                  child: Text("Doesn't Repeat"),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'daily',
+                                  child: Text("Repeat Daily"),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'weekly',
+                                  child: Text("Repeat Weekly"),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'yearly',
+                                  child: Text("Repeat Yearly"),
+                                ),
+                              ],
+                            ),
+                            (() {
+                              if (model.item['repeat'] == 'never') {
+                                return Container();
+                              } else {
+                                return Text('every');
+                              }
+                            })(),
+                            Container(width: 6),
+                            (() {
+                              if (model.item['repeat'] == 'never') {
+                                return Container();
+                              } else {
+                                return Container(
+                                  width: 50,
+                                  child: TextFormField(
+                                    initialValue: model.item['repeatEvery'].toString(),
+                                    onSaved: (String newValue) {
+                                      print('every: $newValue');
+                                      model.item['repeatEvery'] = int.parse(newValue);
+                                    },
+                                    keyboardType: TextInputType.numberWithOptions(
+                                      signed: false,
+                                      decimal: false,
+                                    ),
+                                    inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
+                                    decoration: InputDecoration(
+                                      contentPadding: EdgeInsets.symmetric(horizontal: 6),
+                                    ),
+                                  ),
+                                );
+                              }
+                            })(),
+                            Container(width: 6),
+                            (() {
+                              if (model.item['repeat'] == 'daily') {
+                                return Text('days');
+                              } else if (model.item['repeat'] == 'weekly') {
+                                return Text('weeks');
+                              } else if (model.item['repeat'] == 'monthly') {
+                                return Text('months');
+                              } else if (model.item['repeat'] == 'yearly') {
+                                return Text('years');
+                              } else {
+                                return Container();
+                              }
+                            })(),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -220,12 +300,14 @@ class NotificationDialogState extends State<NotificationDialog> {
                         splashColor: Colors.transparent,
                         elevation: 0,
                         onPressed: () {
-                          Navigator.of(context).pop();
-                          formKey.currentState.save();
-                          if (mode == 'new') {
-                            listModel.add(model.item);
-                          } else if (mode == 'edit') {
-                            listModel.update(id: model.item['id'], notificationItem: model.item);
+                          if (formKey.currentState.validate()) {
+                            Navigator.of(context).pop();
+                            formKey.currentState.save();
+                            if (mode == 'new') {
+                              listModel.add(model.item);
+                            } else if (mode == 'edit') {
+                              listModel.update(id: model.item['id'], notificationItem: model.item);
+                            }
                           }
                         },
                         color: globals.primaryButtonColor,
