@@ -181,34 +181,44 @@ class NotificationDialogState extends State<NotificationDialog> {
                         padding: EdgeInsets.symmetric(horizontal: 24),
                         child: Row(
                           children: <Widget>[
-                            DropdownButton(
-                              onChanged: (newValue) {
+                            FormField(
+                              initialValue: model.item['repeat'],
+                              onSaved: (newValue) {
                                 model.item['repeat'] = newValue;
-                                model.rebuild();
                               },
-                              value: model.item['repeat'],
-                              elevation: 16,
-                              // underline: Container(),
-                              items: [
-                                DropdownMenuItem(
-                                  value: 'never',
-                                  child: Text("Doesn't Repeat"),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'daily',
-                                  child: Text("Repeat Daily"),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'weekly',
-                                  child: Text("Repeat Weekly"),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'yearly',
-                                  child: Text("Repeat Yearly"),
-                                ),
-                              ],
+                              builder: (FormFieldState state) {
+                                return DropdownButton(
+                                  onChanged: (newValue) {
+                                    model.item['repeat'] = newValue;
+                                    state.didChange(newValue);
+                                    model.rebuild();
+                                  },
+                                  value: state.value,
+                                  elevation: 16,
+                                  items: [
+                                    DropdownMenuItem(
+                                      value: 'never',
+                                      child: Text("Doesn't Repeat"),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'daily',
+                                      child: Text("Repeat Daily"),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'weekly',
+                                      child: Text("Repeat Weekly"),
+                                    ),
+                                    DropdownMenuItem(
+                                      value: 'yearly',
+                                      child: Text("Repeat Yearly"),
+                                    ),
+                                  ],
+                                );
+                              },
                             ),
                             (() {
+                              print(model.item['repeat']);
+                              print(model.item['repeatEvery']);
                               if (model.item['repeat'] == 'never') {
                                 return Container();
                               } else {
