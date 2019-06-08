@@ -1,16 +1,10 @@
-# notifier
-
-A new Flutter project.
+# Notifier
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+All you really need is to [install Flutter](https://flutter.dev/docs/get-started/install). Then, as with any Flutter app, you run `flutter packages get` to install dependencies.
 
-A few resources to get you started if this is your first Flutter project:
+The app is built using the [scoped_model](https://pub.dev/packages/scoped_model) package, which is worth knowing about. Other than that, it pretty much works like any basic Flutter app, so there's not much else that needs to be said.
 
-- [Lab: Write your first Flutter app](https://flutter.io/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.io/docs/cookbook)
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.io/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+### Generate app icon
+I used the flutter_launcher_icons package for that, so follow [these instructions](https://pub.dev/packages/flutter_launcher_icons).

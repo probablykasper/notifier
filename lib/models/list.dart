@@ -2,26 +2,16 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:core';
 import 'dart:math';
+import 'dart:ui';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-
-String generateId() {
-  const strlen = 8;
-  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-
-  Random rnd = new Random(new DateTime.now().millisecondsSinceEpoch);
-  String result = "";
-  for (var i = 0; i < strlen; i++) {
-    result += chars[rnd.nextInt(chars.length)];
-  }
-  return result;
-}
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 class ListModel extends Model {
-
   Map<String, dynamic> _notificationItems = {};
-  
+
   UnmodifiableMapView get items {
     print('ListModel get items');
     return UnmodifiableMapView(_notificationItems);
@@ -38,6 +28,15 @@ class ListModel extends Model {
   ListModel({load: false}) {
     print(load ? 'ListModel constructor + loading' : 'ListModel constructor');
     if (load == true) _load();
+    // initialize notification plugin:
+    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+    var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+    var initializationSettingsIOS = IOSInitializationSettings();
+    var initializationSettings = InitializationSettings(
+      initializationSettingsAndroid,
+      initializationSettingsIOS,
+    );
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
   _load() async {
@@ -54,12 +53,48 @@ class ListModel extends Model {
     print('ListModel _save');
   }
 
+  Future<void> _addNotification(dynamic notificationItem) async {
+    print('_addNotification');
+    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'your other channel id',
+        'your other channel name',
+        'your other channel description',
+        icon: 'app_icon',
+        color: Color(0x00B0FF),
+        ledColor: Color(0x00B0FF),
+        ledOnMs: 1000,
+        ledOffMs: 500,
+        enableLights: true,
+        );
+    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+    var platformChannelSpecifics = NotificationDetails(
+      androidPlatformChannelSpecifics,
+      iOSPlatformChannelSpecifics,
+    );
+    if (notificationItem['repeat'] == 'never') {
+      await flutterLocalNotificationsPlugin.schedule(
+        int.parse(notificationItem['id']),
+        notificationItem['title'],
+        notificationItem['description'],
+        DateTime.fromMillisecondsSinceEpoch(notificationItem['date']),
+        platformChannelSpecifics,
+      );
+      print('SCHEDULED NOTIFICATION');
+    } else if (notificationItem['repeat'] == 'daily') {
+    } else if (notificationItem['repeat'] == 'weekly') {
+    } else if (notificationItem['repeat'] == 'monthly') {
+    } else if (notificationItem['repeat'] == 'yearly') {}
+  }
+
   void add(dynamic notificationItem) async {
-    final id = generateId();
+    final int idLen = 9;
+    final String id = Random.secure().nextInt(pow(10, idLen)).toString();
     notificationItem['id'] = id;
     _notificationItems[id] = notificationItem;
     await _save();
+    await _addNotification(notificationItem);
     print('ListModel add');
+
     notifyListeners();
   }
 
@@ -74,9 +109,8 @@ class ListModel extends Model {
     notificationItem['id'] = id;
     _notificationItems[id] = notificationItem;
     await _save();
+    await _addNotification(notificationItem);
     print('ListModel update');
     notifyListeners();
   }
-
 }
-
