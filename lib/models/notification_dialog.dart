@@ -8,7 +8,8 @@ class NotificationDialogModel extends Model {
     'repeatEvery': 1,
     'weekdays': [false,false,false,false,false,false,false],
     'noSwipeAway': false,
-    'date': DateTime.now().millisecondsSinceEpoch,
+    'date': DateTime.now().add(Duration(days: 1)).millisecondsSinceEpoch,
+    'nextDate': DateTime.now().add(Duration(days: 1)).millisecondsSinceEpoch,
   };
   Map<String, Object> initialItem;
 

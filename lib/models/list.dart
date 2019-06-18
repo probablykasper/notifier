@@ -102,6 +102,64 @@ class ListModel extends Model {
       androidPlatformChannelSpecifics,
       iOSPlatformChannelSpecifics,
     );
+
+    _notificationItems.forEach((idString, notificationItem) {
+      final int id = int.parse(idString);
+      int next24h = DateTime.now().add(Duration(hours: 24)).millisecondsSinceEpoch;
+      if (notificationItem['nextDate'] < next24h) {
+        flutterLocalNotificationsPlugin.schedule(
+          id,
+          notificationItem['title'],
+          notificationItem['description'],
+          DateTime.fromMillisecondsSinceEpoch(notificationItem['nextDate']),
+          platformChannelSpecifics,
+        );
+        DateTime nextDate = DateTime.fromMillisecondsSinceEpoch(notificationItem['nextDate']);
+        int newDay = nextDate.day;
+        int newMonth = nextDate.month;
+        int newYear = nextDate.year;
+        if (notificationItem['repeat'] == 'daily') {
+          newDay += notificationItem['repeatEvery'];
+        } else if (notificationItem['repeat'] == 'weekly') {
+          List weekdays = notificationItem['weekdays'];
+          int firstCheckedWeekday;
+          for (int i = 0; i < 7; i++) {
+            if (weekdays[i] == true) firstCheckedWeekday = i;
+          }
+          // i = x days in the future. Starts with tomorrow:
+          int i = 1;
+          while (i != 100) {
+            // done looping through this week:
+            if (nextDate.weekday+i == 7) {
+              // set to monday next week:
+              newDay += i;
+              // skip weeks:
+              newDay += 7*notificationItem['repeatEvery'] - 1;
+              // set to next checked weekday:
+              newDay += firstCheckedWeekday;
+            // weekday is checked:
+            } else if (weekdays[nextDate.weekday+i] == true) {
+              newDay+= i;
+              i = 100;
+            // weekday is not checked:
+            } else {
+              i++;
+            }
+          }
+        } else if (notificationItem['repeat'] == 'monthly') {
+          newMonth += notificationItem['repeatEvery'];
+        } else if (notificationItem['repeat'] == 'yearly') {
+          newYear += notificationItem['repeatEvery'];
+        }
+        notificationItem['nextDate'] = DateTime(
+          newYear,
+          newMonth,
+          newDay,
+          nextDate.hour,
+          nextDate.minute,
+        );
+      }
+    });
   }
 
   _save() async {
