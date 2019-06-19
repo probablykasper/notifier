@@ -103,10 +103,18 @@ class ListModel extends Model {
       iOSPlatformChannelSpecifics,
     );
 
+    List<PendingNotificationRequest> pendingNotifications =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    List<int> pendingNotificationIds = pendingNotifications.map((pendingNotification) {
+      return pendingNotification.id;
+    }).toList();
+    flutterLocalNotificationsPlugin.cancelAll();
     _notificationItems.forEach((idString, notificationItem) {
-      final int id = int.parse(idString);
+      int id = int.parse(idString);
       int next24h = DateTime.now().add(Duration(hours: 24)).millisecondsSinceEpoch;
-      if (notificationItem['nextDate'] < next24h) {
+      if (!pendingNotificationIds.contains(notificationItem['id']) &&
+          notificationItem['nextDate'] < next24h) {
+        print("[notifier] notification '${notificationItem['title']}' ($id) has been scheduled");
         flutterLocalNotificationsPlugin.schedule(
           id,
           notificationItem['title'],
@@ -157,7 +165,7 @@ class ListModel extends Model {
           newDay,
           nextDate.hour,
           nextDate.minute,
-        );
+        ).millisecondsSinceEpoch;
       }
     });
   }
