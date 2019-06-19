@@ -72,6 +72,7 @@ class NotificationDialogState extends State<NotificationDialog> {
       pickedTime.minute,
     );
     model.item['date'] = newDate.millisecondsSinceEpoch;
+    model.item['nextDate'] = newDate.millisecondsSinceEpoch;
     model.rebuild();
   }
 
