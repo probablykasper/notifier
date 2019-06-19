@@ -114,10 +114,9 @@ class ListModel extends Model {
       int id = int.parse(idString);
       int next24h = DateTime.now().add(Duration(hours: 24)).millisecondsSinceEpoch;
       if (!pendingNotificationIds.contains(notificationItem['id']) &&
-          notificationItem['nextDate'] < next24h) {
+          notificationItem['nextDate'] < next24h &&
+          notificationItem['nextDate'] > 0) {
         DateTime nextDate = DateTime.fromMillisecondsSinceEpoch(notificationItem['nextDate']);
-        print(nextDate);
-        print("[notifier] notification '${notificationItem['title']}' ($id) has been scheduled");
         flutterLocalNotificationsPlugin.schedule(
           id,
           notificationItem['title'],
@@ -168,6 +167,9 @@ class ListModel extends Model {
           nextDate.hour,
           nextDate.minute,
         ).millisecondsSinceEpoch;
+        if (notificationItem['repeat'] == 'never') notificationItem['nextDate'] = 0;
+        print(
+            "[notifier] notification $id ('${notificationItem['title']}') has been scheduled for $nextDate. Next notification: ${notificationItem['nextDate']}");
       }
     });
   }
