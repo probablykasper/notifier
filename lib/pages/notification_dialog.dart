@@ -147,21 +147,22 @@ class NotificationDialogState extends State<NotificationDialog> {
                       title,
                       description,
                       //* CANNOT BE SWIPED AWAY?
-                      ListTile(
-                        // this is not a SwitchListTile because that doesn't support padding
-                        contentPadding: EdgeInsets.symmetric(horizontal: 24),
-                        title: Text('Notification cannot be swiped away'),
-                        onTap: () {
-                          model.item['noSwipeAway'] = !model.item['noSwipeAway'];
-                          model.rebuild();
-                        },
-                        trailing: Switch(
-                            value: model.item['noSwipeAway'],
-                            onChanged: (bool newValue) {
-                              model.item['noSwipeAway'] = newValue;
-                              model.rebuild();
-                            }),
-                      ),
+                      // ListTile(
+                      //   // this is not a SwitchListTile because that doesn't support padding
+                      //   contentPadding: EdgeInsets.symmetric(horizontal: 24),
+                      //   title: Text('Notification cannot be swiped away'),
+                      //   onTap: () {
+                      //     model.item['noSwipeAway'] = !model.item['noSwipeAway'];
+                      //     model.rebuild();
+                      //   },
+                      //   trailing: Switch(
+                      //       value: model.item['noSwipeAway'],
+                      //       onChanged: (bool newValue) {
+                      //         model.item['noSwipeAway'] = newValue;
+                      //         model.rebuild();
+                      //       }),
+                      // ),
+                      //* TIME
                       ListTile(
                         contentPadding: EdgeInsets.symmetric(horizontal: 24),
                         leading: Icon(Icons.calendar_today),
