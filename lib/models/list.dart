@@ -109,7 +109,6 @@ class ListModel extends Model {
     List<int> pendingNotificationIds = pendingNotifications.map((pendingNotification) {
       return pendingNotification.id;
     }).toList();
-    flutterLocalNotificationsPlugin.cancelAll();
     _notificationItems.forEach((idString, notificationItem) {
       int id = int.parse(idString);
       int next24h = DateTime.now().add(Duration(hours: 24)).millisecondsSinceEpoch;
