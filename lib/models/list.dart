@@ -20,7 +20,7 @@ class ListModel extends Model {
   Map<String, dynamic> _notificationItems = {};
 
   UnmodifiableMapView get items {
-    print('ListModel get items');
+    print('[notifier] ListModel get items');
     return UnmodifiableMapView(_notificationItems);
   }
 
@@ -33,7 +33,7 @@ class ListModel extends Model {
   }
 
   ListModel({load: false}) {
-    print(load ? 'ListModel constructor + loading' : 'ListModel constructor');
+    print('[notifier] ListModel constructor');
     if (load == true) _load();
     // initialize notification plugin:
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -47,6 +47,7 @@ class ListModel extends Model {
   }
 
   _load() async {
+    print('[notifier] listModel _load()');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String notificationItems = prefs.getString('notificationItems') ?? '{}';
     _notificationItems = json.decode(notificationItems);
@@ -137,20 +138,20 @@ class ListModel extends Model {
           // i = x days in the future. Starts with tomorrow:
           int i = 1;
           while (i != 100) {
-            // done looping through this week:
-            if (nextDate.weekday+i == 7) {
+            if (nextDate.weekday + i == 7) {
+              // ^ done looping through this week
               // set to monday next week:
               newDay += i;
               // skip weeks:
-              newDay += 7*notificationItem['repeatEvery'] - 1;
+              newDay += 7 * notificationItem['repeatEvery'] - 1;
               // set to next checked weekday:
               newDay += firstCheckedWeekday;
-            // weekday is checked:
-            } else if (weekdays[nextDate.weekday+i] == true) {
-              newDay+= i;
+            } else if (weekdays[nextDate.weekday + i] == true) {
+              // ^ weekday is checked
+              newDay += i;
               i = 100;
-            // weekday is not checked:
             } else {
+              // ^ weekday is not checked
               i++;
             }
           }
@@ -168,12 +169,13 @@ class ListModel extends Model {
         ).millisecondsSinceEpoch;
       }
     });
+    print(pendingNotificationIds);
   }
 
   _save() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('notificationItems', json.encode(_notificationItems));
-    print('ListModel _save');
+    print('[notifier] ListModel _save');
   }
 
   void add(dynamic notificationItem) async {
@@ -183,7 +185,7 @@ class ListModel extends Model {
     _notificationItems[id] = notificationItem;
     await _save();
     await _setNotifications();
-    print('ListModel add');
+    print('[notifier] ListModel add');
 
     notifyListeners();
   }
@@ -191,7 +193,7 @@ class ListModel extends Model {
   void delete(String id) async {
     _notificationItems.remove(id);
     await _save();
-    print('ListModel delete');
+    print('[notifier] ListModel delete');
     notifyListeners();
   }
 
@@ -200,7 +202,7 @@ class ListModel extends Model {
     _notificationItems[id] = notificationItem;
     await _save();
     await _setNotifications();
-    print('ListModel update');
+    print('[notifier] ListModel update');
     notifyListeners();
   }
 }

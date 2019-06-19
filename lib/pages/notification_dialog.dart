@@ -93,12 +93,12 @@ class NotificationDialogState extends State<NotificationDialog> {
 
   @override
   Widget build(BuildContext context) {
-    print('Building dialog ScopedModel');
+    print('[notifier] Building dialog ScopedModel');
     return ScopedModel<NotificationDialogModel>(
       model: NotificationDialogModel(initialItem: initialItem),
       child: ScopedModelDescendant<NotificationDialogModel>(
         builder: (context, child, model) {
-          print('Building dialog ScopedModelDescendant');
+          print('[notifier] Building dialog ScopedModelDescendant');
           //* TITLE
           final title = TextFormField(
             initialValue: model.item['title'],
@@ -171,7 +171,7 @@ class NotificationDialogState extends State<NotificationDialog> {
                           ),
                         ),
                         onTap: () async {
-                          print('Selecting date');
+                          print('[notifier] Selecting date');
                           _pickDateTime(context, model);
                           model.rebuild();
                         },
@@ -223,8 +223,6 @@ class NotificationDialogState extends State<NotificationDialog> {
                             ),
                             Container(width: 6),
                             (() {
-                              print(model.item['repeat']);
-                              print(model.item['repeatEvery']);
                               if (model.item['repeat'] == 'never') {
                                 return Container();
                               } else {
@@ -241,7 +239,6 @@ class NotificationDialogState extends State<NotificationDialog> {
                                   child: TextFormField(
                                     initialValue: model.item['repeatEvery'].toString(),
                                     onSaved: (String newValue) {
-                                      print('every: $newValue');
                                       model.item['repeatEvery'] = int.parse(newValue);
                                     },
                                     textAlign: TextAlign.center,

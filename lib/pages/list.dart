@@ -50,12 +50,12 @@ class ListPage extends StatelessWidget {
 class List extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print('Building list ScopedModel');
+    print('[notifier] Building list ScopedModel');
     return ScopedModel<ListModel>(
       model: listModel,
       child: ScopedModelDescendant<ListModel>(
         builder: (context, child, listModel) {
-          print('Building list ScopedModelDescendant');
+          print('[notifier] Building list ScopedModelDescendant');
           return SliverList(
             delegate: SliverChildListDelegate(
               listModel.itemsAsList.map((item) {
@@ -63,7 +63,7 @@ class List extends StatelessWidget {
                   splashColor: globals.splashColor,
                   highlightColor: globals.highlightColor,
                   onTap: () {
-                    print("Someone tapped me and it felt great");
+                    print("[notifier] Someone tapped me and it felt great");
                     return showDialog(
                       context: context,
                       builder: (BuildContext context) {
