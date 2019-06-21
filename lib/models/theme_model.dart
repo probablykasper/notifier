@@ -67,8 +67,8 @@ class ThemeModel extends Model {
     backgroundColor = color[1];
     descriptionColor = color[6];
     primaryButtonColor = darkMode ? color[4] : blue;
-    splashColor = color[6].withOpacity(0.3);
-    highlightColor = color[6].withOpacity(0.3);
+    splashColor = darkMode ? color[6].withOpacity(0.3) : color[6].withOpacity(0.3);
+    highlightColor = darkMode ? color[6].withOpacity(0.32) : color[6].withOpacity(0.32);
     appBarBackgroundColor = darkMode ? color[2] : blue;
 
     appTheme = ThemeData(
@@ -85,7 +85,7 @@ class ThemeModel extends Model {
       ),
       buttonColor: Colors.yellowAccent,
       highlightColor: highlightColor,
-      // splashColor: splashColor,
+      splashColor: splashColor,
       buttonTheme: ButtonThemeData(
         minWidth: 85,
         height: 35,
