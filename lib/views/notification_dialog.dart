@@ -22,7 +22,6 @@ class NotificationDialog extends StatefulWidget {
 }
 
 class NotificationDialogState extends State<NotificationDialog> {
-
   final Map<String, dynamic> initialItem;
   final String mode;
   final ListModel listModel;
@@ -74,7 +73,6 @@ class NotificationDialogState extends State<NotificationDialog> {
     );
     model.item['date'] = newDate.millisecondsSinceEpoch;
     model.item['nextDate'] = newDate.millisecondsSinceEpoch;
-    model.rebuild();
   }
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -176,7 +174,7 @@ class NotificationDialogState extends State<NotificationDialog> {
                         ),
                         onTap: () async {
                           print('[notifier] Selecting date');
-                          _pickDateTime(context, model);
+                          await _pickDateTime(context, model);
                           model.rebuild();
                         },
                       ),

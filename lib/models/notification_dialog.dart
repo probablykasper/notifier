@@ -1,7 +1,7 @@
 import 'package:scoped_model/scoped_model.dart';
 
 class NotificationDialogModel extends Model {
-  Map<String, dynamic> item = {
+  static final Map<String, dynamic> defaultItem = {
     'title': '',
     'description': '',
     'repeat': 'never',
@@ -11,10 +11,10 @@ class NotificationDialogModel extends Model {
     'date': DateTime.now().millisecondsSinceEpoch,
     'nextDate': DateTime.now().millisecondsSinceEpoch,
   };
-  Map<String, Object> initialItem;
+  Map<String, dynamic> item = defaultItem;
 
-  NotificationDialogModel({this.initialItem}) {
-    if (initialItem != null) item = initialItem;
+  NotificationDialogModel({Map<String, Object> initialItem}) {
+    item = initialItem;
   }
 
   rebuild() {
