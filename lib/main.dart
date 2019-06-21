@@ -1,19 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:notifier/globals.dart';
-import 'package:notifier/pages/list.dart';
+import 'package:notifier/pages/app.dart';
 
-void main() {
+import 'models/theme_model.dart';
+
+void main() async {
+  await ThemeModel.loadPrefs();
   runApp(App());
-}
-
-class App extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Notifier',
-      debugShowCheckedModeBanner: false,
-      theme: globals.appTheme,
-      home: ListPage(),
-    );
-  }
 }

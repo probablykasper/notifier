@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:notifier/models/notification_dialog.dart';
+import 'package:notifier/models/theme_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:intl/intl.dart';
 import 'package:notifier/models/list.dart';
@@ -23,6 +24,7 @@ class NotificationDialog extends StatefulWidget {
 }
 
 class NotificationDialogState extends State<NotificationDialog> {
+
   final Map<String, dynamic> initialItem;
   final String mode;
   final ListModel listModel;
@@ -30,6 +32,7 @@ class NotificationDialogState extends State<NotificationDialog> {
   NotificationDialogState({this.mode, this.initialItem, this.listModel});
 
   Future _pickDateTime(BuildContext context, NotificationDialogModel model) async {
+    final themeModel = ScopedModel.of<ThemeModel>(context);
     final firstDate = DateTime.now().subtract(Duration(days: 1));
     var initialDateTime = DateTime.fromMillisecondsSinceEpoch(model.item['date']);
     if (initialDateTime.isBefore(firstDate)) {
@@ -44,7 +47,7 @@ class NotificationDialogState extends State<NotificationDialog> {
       builder: (BuildContext context, Widget child) {
         return Theme(
           child: child,
-          data: globals.pickerTheme,
+          data: themeModel.pickerTheme,
         );
       },
     );
@@ -57,7 +60,7 @@ class NotificationDialogState extends State<NotificationDialog> {
       builder: (BuildContext context, Widget child) {
         return Theme(
           child: child,
-          data: globals.pickerTheme,
+          data: themeModel.pickerTheme,
         );
       },
     );
@@ -76,7 +79,7 @@ class NotificationDialogState extends State<NotificationDialog> {
     model.rebuild();
   }
 
-  final formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   FocusNode descriptionFocusNode;
 
@@ -94,6 +97,7 @@ class NotificationDialogState extends State<NotificationDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final themeModel = ScopedModel.of<ThemeModel>(context);
     print('[notifier] Building dialog ScopedModel');
     return ScopedModel<NotificationDialogModel>(
       model: NotificationDialogModel(initialItem: initialItem),
@@ -200,6 +204,7 @@ class NotificationDialogState extends State<NotificationDialog> {
                                   style: TextStyle(
                                     inherit: true,
                                     fontFamily: 'Jost',
+                                    color: themeModel.textColor,
                                     fontSize: 15,
                                   ),
                                   items: [
@@ -276,6 +281,7 @@ class NotificationDialogState extends State<NotificationDialog> {
                           ],
                         ),
                       ),
+                      //* WEEKDAY CHECKBOXES
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 24),
                         child: (() {
@@ -312,13 +318,13 @@ class NotificationDialogState extends State<NotificationDialog> {
                           return Padding(
                             padding: EdgeInsets.only(right: 12),
                             child: MaterialButton(
-                              highlightColor: globals.highlightColor,
+                              highlightColor: themeModel.highlightColor,
                               splashColor: Colors.transparent,
                               onPressed: () {
                                 listModel.delete(model.item['id']);
                                 Navigator.of(context).pop();
                               },
-                              child: Text('Delete', style: globals.buttonTextStyle),
+                              child: Text('Delete', style: themeModel.buttonTextStyle),
                               materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             ),
                           );
@@ -327,12 +333,12 @@ class NotificationDialogState extends State<NotificationDialog> {
                       })(),
                       //* CANCEL
                       MaterialButton(
-                        highlightColor: globals.highlightColor,
+                        highlightColor: themeModel.highlightColor,
                         splashColor: Colors.transparent,
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        child: Text('Cancel', style: globals.buttonTextStyle),
+                        child: Text('Cancel', style: themeModel.buttonTextStyle),
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                       Container(width: 12),
@@ -351,10 +357,9 @@ class NotificationDialogState extends State<NotificationDialog> {
                             }
                           }
                         },
-                        color: globals.primaryButtonColor,
-                        textColor: globals.primaryButtonTextColor,
-                        highlightColor: globals.highlightColor,
-                        child: Text('Save', style: globals.buttonTextStyle),
+                        color: themeModel.primaryButtonColor,
+                        highlightColor: themeModel.highlightColor,
+                        child: Text('Save', style: themeModel.buttonTextStyle),
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
                     ],

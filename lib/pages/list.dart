@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:notifier/models/theme_model.dart';
 import 'package:notifier/pages/notification_dialog.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:notifier/globals.dart';
 import 'package:notifier/models/list.dart';
 
 ListModel listModel = ListModel(load: true);
@@ -11,6 +11,7 @@ ListModel listModel = ListModel(load: true);
 class ListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final themeModel = ScopedModel.of<ThemeModel>(context);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -27,15 +28,24 @@ class ListPage extends StatelessWidget {
         slivers: <Widget>[
           SliverAppBar(
             pinned: true,
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.wb_sunny),
+                onPressed: () {
+                  ScopedModel.of<ThemeModel>(context).toggleDarkMode();
+                },
+                color: Colors.white,
+              )
+            ],
             // backgroundColor: Colors.black26,
             floating: false,
             snap: false,
             expandedHeight: 200.0,
-            backgroundColor: globals.appBarBackgroundColor,
+            backgroundColor: themeModel.appBarBackgroundColor,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(
                 'Notifier',
-                style: globals.appTitleStyle,
+                style: themeModel.appTitleStyle,
               ),
               titlePadding: EdgeInsets.only(left: 72, bottom: 16),
             ),
@@ -51,6 +61,7 @@ class List extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('[notifier] Building list ScopedModel');
+    final themeModel = ScopedModel.of<ThemeModel>(context);
     return ScopedModel<ListModel>(
       model: listModel,
       child: ScopedModelDescendant<ListModel>(
@@ -60,8 +71,8 @@ class List extends StatelessWidget {
             delegate: SliverChildListDelegate(
               listModel.itemsAsList.map((item) {
                 return InkWell(
-                  splashColor: globals.splashColor,
-                  highlightColor: globals.highlightColor,
+                  splashColor: themeModel.splashColor,
+                  highlightColor: themeModel.highlightColor,
                   onTap: () {
                     print("[notifier] Someone tapped me and it felt great");
                     return showDialog(
@@ -92,7 +103,7 @@ class List extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
-                            color: Colors.grey[500],
+                            color: themeModel.descriptionColor,
                           ),
                         ),
                       ],
