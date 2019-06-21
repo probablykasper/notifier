@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:notifier/models/theme_model.dart';
-import 'package:notifier/pages/notification_dialog.dart';
+import 'package:notifier/views/notification_dialog.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:notifier/models/list.dart';
 

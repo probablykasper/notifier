@@ -8,8 +8,6 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:intl/intl.dart';
 import 'package:notifier/models/list.dart';
 
-import 'package:notifier/globals.dart';
-
 class NotificationDialog extends StatefulWidget {
   final Map<String, dynamic> initialItem;
   final String mode;

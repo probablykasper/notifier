@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notifier/pages/app.dart';
+import 'package:notifier/views/app.dart';
 
 import 'models/theme_model.dart';
 

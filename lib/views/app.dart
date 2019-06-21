@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:notifier/models/theme_model.dart';
-import 'package:notifier/pages/list.dart';
+import 'package:notifier/views/list.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class App extends StatelessWidget {
