@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:notifier/models/notification_dialog.dart';
 import 'package:notifier/models/theme_model.dart';
+import 'package:notifier/views/custom_text_form_field.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:intl/intl.dart';
 import 'package:notifier/models/list.dart';
@@ -94,6 +95,7 @@ class NotificationDialogState extends State<NotificationDialog> {
   @override
   Widget build(BuildContext context) {
     final themeModel = ScopedModel.of<ThemeModel>(context);
+    bool titleHasChanged = false;
     print('[notifier] Building dialog ScopedModel');
     return ScopedModel<NotificationDialogModel>(
       model: NotificationDialogModel(initialItem: initialItem),
@@ -105,7 +107,7 @@ class NotificationDialogState extends State<NotificationDialog> {
           bool timeHasPassed = model.item['date'] < DateTime.now().millisecondsSinceEpoch;
           bool saveDisabled = noWeekdaySelected || timeHasPassed;
           //* TITLE
-          final title = TextFormField(
+          final title = CustomTextFormField(
             initialValue: model.item['title'],
             textInputAction: TextInputAction.next,
             decoration: InputDecoration(
@@ -113,6 +115,14 @@ class NotificationDialogState extends State<NotificationDialog> {
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
             ),
+            autovalidate: true,
+            validator: (value) {
+              if (value == '' && titleHasChanged) return 'Write something, bro';
+              return null;
+            },
+            onChanged: (String newValue) {
+              if (titleHasChanged) titleHasChanged = true;
+            },
             onFieldSubmitted: (String newValue) {
               FocusScope.of(context).requestFocus(descriptionFocusNode);
             },
@@ -367,7 +377,8 @@ class NotificationDialogState extends State<NotificationDialog> {
                         splashColor: Colors.transparent,
                         elevation: 0,
                         onPressed: () {
-                          if (formKey.currentState.validate() && !saveDisabled) {
+                          titleHasChanged = true;
+                          if (formKey.currentState.validate() && !saveDisabled && titleHasChanged) {
                             Navigator.of(context).pop();
                             formKey.currentState.save();
                             if (mode == 'new') {
