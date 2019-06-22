@@ -4,8 +4,12 @@ class NotificationDialogModel extends Model {
   Map<String, dynamic> item;
 
   static Map<String, dynamic> defaultItem() {
+    DateTime now = DateTime.now();
+    DateTime defaultDate = DateTime(now.year, now.month, now.day, now.hour+2);
+
     List<bool> weekdays = [false, false, false, false, false, false, false];
-    weekdays[DateTime.now().weekday-1] = true;
+    weekdays[defaultDate.weekday-1] = true;
+
     return {
       'title': '',
       'description': '',
@@ -13,8 +17,8 @@ class NotificationDialogModel extends Model {
       'repeatEvery': 1,
       'weekdays': weekdays,
       'noSwipeAway': false,
-      'date': DateTime.now().millisecondsSinceEpoch,
-      'nextDate': DateTime.now().millisecondsSinceEpoch,
+      'date': defaultDate.millisecondsSinceEpoch,
+      'nextDate': defaultDate.millisecondsSinceEpoch,
     };
   }
 
