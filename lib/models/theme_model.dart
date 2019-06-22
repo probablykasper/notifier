@@ -36,7 +36,7 @@ class ThemeModel extends Model {
         6: Colors.grey[600],
       };
   Map<int, Color> color;
-  Color textColor, backgroundColor, splashColor, highlightColor, appBarBackgroundColor, descriptionColor, primaryButtonColor;
+  Color textColor, backgroundColor, splashColor, highlightColor, appBarBackgroundColor, descriptionColor, primaryButtonColor, primaryButtonDisabledColor, errorText;
   Color get blue => Color(0xFF000B0FF);
 
   ThemeData appTheme;
@@ -64,11 +64,13 @@ class ThemeModel extends Model {
 
     color = darkMode ? grey : white;
     textColor = darkMode ? Colors.white : Colors.black;
+    errorText = Colors.red[400];
     backgroundColor = color[1];
     descriptionColor = color[6];
     primaryButtonColor = darkMode ? color[4] : blue;
-    splashColor = darkMode ? color[6].withOpacity(0.3) : color[6].withOpacity(0.3);
-    highlightColor = darkMode ? color[6].withOpacity(0.32) : color[6].withOpacity(0.32);
+    primaryButtonDisabledColor = color[4].withOpacity(0.5);
+    splashColor = color[6].withOpacity(0.3);
+    highlightColor = color[6].withOpacity(0.32);
     appBarBackgroundColor = darkMode ? color[2] : blue;
 
     appTheme = ThemeData(

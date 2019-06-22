@@ -21,7 +21,7 @@ class ListPage extends StatelessWidget {
             builder: (BuildContext context) {
               return NotificationDialog(
                   mode: 'new',
-                  initialItem: NotificationDialogModel.defaultItem,
+                  initialItem: NotificationDialogModel.defaultItem(),
                   listModel: listModel);
             },
           );

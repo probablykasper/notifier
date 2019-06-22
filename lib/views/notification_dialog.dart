@@ -100,6 +100,10 @@ class NotificationDialogState extends State<NotificationDialog> {
       child: ScopedModelDescendant<NotificationDialogModel>(
         builder: (context, child, model) {
           print('[notifier] Building dialog ScopedModelDescendant');
+          bool noWeekdaySelected =
+              model.item['repeat'] == 'weekly' && !model.item['weekdays'].contains(true);
+          bool timeHasPassed = model.item['date'] < DateTime.now().millisecondsSinceEpoch;
+          bool saveDisabled = noWeekdaySelected || timeHasPassed;
           //* TITLE
           final title = TextFormField(
             initialValue: model.item['title'],
@@ -109,9 +113,6 @@ class NotificationDialogState extends State<NotificationDialog> {
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
             ),
-            onSaved: (String newValue) {
-              model.item['title'] = newValue;
-            },
             onFieldSubmitted: (String newValue) {
               FocusScope.of(context).requestFocus(descriptionFocusNode);
             },
@@ -167,9 +168,27 @@ class NotificationDialogState extends State<NotificationDialog> {
                         contentPadding: EdgeInsets.symmetric(horizontal: 24),
                         leading: Icon(Icons.calendar_today),
                         title: Text('Time'),
-                        subtitle: Text(
-                          DateFormat("MMMM d, y 'at' h:mm a").format(
-                            DateTime.fromMillisecondsSinceEpoch(model.item['date']),
+                        isThreeLine: timeHasPassed,
+                        // subtitle: Text(
+                        //   DateFormat("MMMM d, y 'at' h:mm a").format(
+                        //     DateTime.fromMillisecondsSinceEpoch(model.item['date']),
+                        //   ),
+                        // ),
+                        subtitle: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: DateFormat("MMMM d, y 'at' h:mm a").format(
+                                  DateTime.fromMillisecondsSinceEpoch(model.item['date']),
+                                ),
+                              ),
+                              TextSpan(
+                                text: !timeHasPassed ? '' : '\nTIme has passed',
+                                style: TextStyle(
+                                  color: themeModel.errorText,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         onTap: () async {
@@ -242,7 +261,10 @@ class NotificationDialogState extends State<NotificationDialog> {
                                   child: TextFormField(
                                     initialValue: model.item['repeatEvery'].toString(),
                                     onSaved: (String newValue) {
-                                      model.item['repeatEvery'] = int.parse(newValue);
+                                      if (newValue == '')
+                                        model.item['repeatEvery'] = 1;
+                                      else
+                                        model.item['repeatEvery'] = int.parse(newValue);
                                     },
                                     textAlign: TextAlign.center,
                                     keyboardType: TextInputType.numberWithOptions(
@@ -250,10 +272,12 @@ class NotificationDialogState extends State<NotificationDialog> {
                                       decimal: false,
                                     ),
                                     inputFormatters: [
+                                      BlacklistingTextInputFormatter(RegExp('^0\$')),
                                       WhitelistingTextInputFormatter.digitsOnly,
                                       LengthLimitingTextInputFormatter(3),
                                     ],
                                     decoration: InputDecoration(
+                                      hintText: '1',
                                       contentPadding: EdgeInsets.symmetric(vertical: 4),
                                     ),
                                   ),
@@ -343,7 +367,7 @@ class NotificationDialogState extends State<NotificationDialog> {
                         splashColor: Colors.transparent,
                         elevation: 0,
                         onPressed: () {
-                          if (formKey.currentState.validate()) {
+                          if (formKey.currentState.validate() && !saveDisabled) {
                             Navigator.of(context).pop();
                             formKey.currentState.save();
                             if (mode == 'new') {
@@ -353,8 +377,12 @@ class NotificationDialogState extends State<NotificationDialog> {
                             }
                           }
                         },
-                        color: themeModel.primaryButtonColor,
-                        highlightColor: themeModel.highlightColor,
+                        color: saveDisabled
+                            ? themeModel.primaryButtonDisabledColor
+                            : themeModel.primaryButtonColor,
+                        highlightColor:
+                            saveDisabled ? Colors.transparent : themeModel.highlightColor,
+                        highlightElevation: saveDisabled ? 0 : 8,
                         child: Text('Save', style: themeModel.buttonTextStyle),
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
