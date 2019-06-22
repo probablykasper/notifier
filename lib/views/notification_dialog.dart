@@ -102,10 +102,10 @@ class NotificationDialogState extends State<NotificationDialog> {
       child: ScopedModelDescendant<NotificationDialogModel>(
         builder: (context, child, model) {
           print('[notifier] Building dialog ScopedModelDescendant');
-          bool noWeekdaySelected =
+          bool noWeekdaySelected() =>
               model.item['repeat'] == 'weekly' && !model.item['weekdays'].contains(true);
-          bool timeHasPassed = model.item['date'] < DateTime.now().millisecondsSinceEpoch;
-          bool saveDisabled = noWeekdaySelected || timeHasPassed;
+          bool timeHasPassed() => model.item['date'] < DateTime.now().millisecondsSinceEpoch;
+          bool saveDisabled() => noWeekdaySelected() || timeHasPassed();
           //* TITLE
           final title = CustomTextFormField(
             initialValue: model.item['title'],
@@ -180,7 +180,7 @@ class NotificationDialogState extends State<NotificationDialog> {
                         contentPadding: EdgeInsets.symmetric(horizontal: 24),
                         leading: Icon(Icons.calendar_today),
                         title: Text('Time'),
-                        isThreeLine: timeHasPassed,
+                        isThreeLine: timeHasPassed(),
                         // subtitle: Text(
                         //   DateFormat("MMMM d, y 'at' h:mm a").format(
                         //     DateTime.fromMillisecondsSinceEpoch(model.item['date']),
@@ -195,7 +195,7 @@ class NotificationDialogState extends State<NotificationDialog> {
                                 ),
                               ),
                               TextSpan(
-                                text: !timeHasPassed ? '' : '\nTIme has passed',
+                                text: !timeHasPassed() ? '' : '\nTIme has passed',
                                 style: TextStyle(
                                   color: themeModel.errorText,
                                 ),
@@ -380,7 +380,7 @@ class NotificationDialogState extends State<NotificationDialog> {
                         elevation: 0,
                         onPressed: () {
                           titleHasChanged = true;
-                          if (formKey.currentState.validate() && !saveDisabled && titleHasChanged) {
+                          if (formKey.currentState.validate() && !saveDisabled() && titleHasChanged) {
                             Navigator.of(context).pop();
                             formKey.currentState.save();
                             if (mode == 'new') {
@@ -390,12 +390,12 @@ class NotificationDialogState extends State<NotificationDialog> {
                             }
                           }
                         },
-                        color: saveDisabled
+                        color: saveDisabled()
                             ? themeModel.primaryButtonDisabledColor
                             : themeModel.primaryButtonColor,
                         highlightColor:
-                            saveDisabled ? Colors.transparent : themeModel.highlightColor,
-                        highlightElevation: saveDisabled ? 0 : 8,
+                            saveDisabled() ? Colors.transparent : themeModel.highlightColor,
+                        highlightElevation: saveDisabled() ? 0 : 8,
                         child: Text('Save', style: themeModel.buttonTextStyle),
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       ),
