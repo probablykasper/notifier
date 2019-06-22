@@ -4,10 +4,7 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-
-import 'input_decorator.dart';
-import 'text_field.dart';
-import 'theme.dart';
+import 'package:flutter/material.dart';
 
 /// A [FormField] that contains a [TextField].
 ///
@@ -33,10 +30,10 @@ import 'theme.dart';
 ///
 /// {@tool sample}
 ///
-/// Creates a [TextFormField] with an [InputDecoration] and validator function.
+/// Creates a [CustomTextFormField] with an [InputDecoration] and validator function.
 ///
 /// ```dart
-/// TextFormField(
+/// CustomTextFormField(
 ///   decoration: const InputDecoration(
 ///     icon: Icon(Icons.person),
 ///     hintText: 'What do people call you?',
@@ -60,7 +57,7 @@ import 'theme.dart';
 ///    integration.
 ///  * [InputDecorator], which shows the labels and other visual elements that
 ///    surround the actual text editing widget.
-class TextFormField extends FormField<String> {
+class CustomTextFormField extends FormField<String> {
   /// Creates a [FormField] that contains a [TextField].
   ///
   /// When a [controller] is specified, [initialValue] must be null (the
@@ -70,7 +67,7 @@ class TextFormField extends FormField<String> {
   ///
   /// For documentation about the various parameters, see the [TextField] class
   /// and [new TextField], the constructor.
-  TextFormField({
+  CustomTextFormField({
     Key key,
     this.controller,
     String initialValue,
@@ -92,6 +89,7 @@ class TextFormField extends FormField<String> {
     int minLines,
     bool expands = false,
     int maxLength,
+    ValueChanged<String> onChanged,
     VoidCallback onEditingComplete,
     ValueChanged<String> onFieldSubmitted,
     FormFieldSetter<String> onSaved,
@@ -134,9 +132,15 @@ class TextFormField extends FormField<String> {
     autovalidate: autovalidate,
     enabled: enabled,
     builder: (FormFieldState<String> field) {
-      final _TextFormFieldState state = field;
+      final _CustomTextFormFieldState state = field;
       final InputDecoration effectiveDecoration = (decoration ?? const InputDecoration())
         .applyDefaults(Theme.of(field.context).inputDecorationTheme);
+      void onChangedHandler(String value) {
+        if (onChanged != null) {
+          onChanged(value);
+        }
+        field.didChange(value);
+      }
       return TextField(
         controller: state._effectiveController,
         focusNode: focusNode,
@@ -156,7 +160,8 @@ class TextFormField extends FormField<String> {
         minLines: minLines,
         expands: expands,
         maxLength: maxLength,
-        onChanged: field.didChange,
+        onChanged: onChangedHandler,
+        // onChanged: field.didChange,
         onEditingComplete: onEditingComplete,
         onSubmitted: onFieldSubmitted,
         inputFormatters: inputFormatters,
@@ -179,16 +184,16 @@ class TextFormField extends FormField<String> {
   final TextEditingController controller;
 
   @override
-  _TextFormFieldState createState() => _TextFormFieldState();
+  _CustomTextFormFieldState createState() => _CustomTextFormFieldState();
 }
 
-class _TextFormFieldState extends FormFieldState<String> {
+class _CustomTextFormFieldState extends FormFieldState<String> {
   TextEditingController _controller;
 
   TextEditingController get _effectiveController => widget.controller ?? _controller;
 
   @override
-  TextFormField get widget => super.widget;
+  CustomTextFormField get widget => super.widget;
 
   @override
   void initState() {
@@ -201,7 +206,7 @@ class _TextFormFieldState extends FormFieldState<String> {
   }
 
   @override
-  void didUpdateWidget(TextFormField oldWidget) {
+  void didUpdateWidget(CustomTextFormField oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.controller != oldWidget.controller) {
       oldWidget.controller?.removeListener(_handleControllerChanged);
