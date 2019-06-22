@@ -145,7 +145,7 @@ class ListModel extends Model {
               newDay += 7 * notificationItem['repeatEvery'] - 1;
               // set to next checked weekday:
               newDay += firstCheckedWeekday;
-            } else if (weekdays[nextDate.weekday + i] == true) {
+            } else if (weekdays[nextDate.weekday - i] == true) {
               // ^ weekday is checked
               newDay += i;
               i = 100;
