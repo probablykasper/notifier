@@ -112,8 +112,6 @@ class NotificationDialogState extends State<NotificationDialog> {
             textInputAction: TextInputAction.next,
             decoration: InputDecoration(
               labelText: 'Title',
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
             ),
             autovalidate: true,
             validator: (value) {
@@ -134,8 +132,6 @@ class NotificationDialogState extends State<NotificationDialog> {
             maxLines: null,
             decoration: InputDecoration(
               labelText: 'Description',
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
             ),
             onSaved: (String newValue) {
               model.item['description'] = newValue;
@@ -155,8 +151,14 @@ class NotificationDialogState extends State<NotificationDialog> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      title,
-                      description,
+                      Padding(
+                        padding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
+                        child: title,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
+                        child: description,
+                      ),
                       //* CANNOT BE SWIPED AWAY?
                       // ListTile(
                       //   // this is not a SwitchListTile because that doesn't support padding
