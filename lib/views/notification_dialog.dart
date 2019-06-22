@@ -121,6 +121,9 @@ class NotificationDialogState extends State<NotificationDialog> {
             onChanged: (String newValue) {
               if (titleHasChanged) titleHasChanged = true;
             },
+            onSaved: (String newValue) {
+              model.item['title'] = newValue;
+            },
             onFieldSubmitted: (String newValue) {
               FocusScope.of(context).requestFocus(descriptionFocusNode);
             },
