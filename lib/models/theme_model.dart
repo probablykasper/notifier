@@ -16,7 +16,7 @@ class ThemeModel extends Model {
         color: darkMode ? blue : Colors.white,
       );
   TextStyle get buttonTextStyle => TextStyle(
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight.w500,
       );
 
   Map<int, Color> get grey => <int, Color>{
@@ -36,7 +36,7 @@ class ThemeModel extends Model {
         6: Colors.grey[600],
       };
   Map<int, Color> color;
-  Color textColor, backgroundColor, splashColor, highlightColor, appBarBackgroundColor, descriptionColor, primaryButtonColor, primaryButtonDisabledColor, errorText;
+  Color textColor, backgroundColor, splashColor, highlightColor, appBarBackgroundColor, descriptionColor, primaryButtonColor, primaryButtonDisabledColor, errorText, checkboxEnabledColor, checkboxDisabledColor;
   Color get blue => Color(0xFF000B0FF);
 
   ThemeData appTheme;
@@ -69,8 +69,10 @@ class ThemeModel extends Model {
     descriptionColor = color[6];
     primaryButtonColor = darkMode ? color[4] : blue;
     primaryButtonDisabledColor = color[4].withOpacity(0.5);
+    checkboxEnabledColor = darkMode ? color[4] : blue;
+    checkboxDisabledColor = darkMode ? primaryButtonColor : color[4];
     splashColor = color[6].withOpacity(0.3);
-    highlightColor = color[6].withOpacity(0.32);
+    highlightColor = darkMode ? color[6].withOpacity(0.3) : color[6].withOpacity(0.2);
     appBarBackgroundColor = darkMode ? color[2] : blue;
 
     appTheme = ThemeData(

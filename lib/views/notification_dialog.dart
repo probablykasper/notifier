@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:notifier/models/notification_dialog.dart';
 import 'package:notifier/models/theme_model.dart';
+import 'package:notifier/views/letter_checkbox.dart';
 import 'package:notifier/views/custom_text_form_field.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:intl/intl.dart';
@@ -326,20 +327,31 @@ class NotificationDialogState extends State<NotificationDialog> {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 24),
                         child: (() {
+                          print(model.item['weekdays']);
                           if (model.item['repeat'] == 'weekly') {
-                            List<Checkbox> checkboxes = [];
-                            model.item['weekdays'].asMap().forEach((index, value) {
+                            List<LetterCheckbox> checkboxes = [];
+                            model.item['weekdays'].asMap().forEach((index, valuex) {
+                              bool value = valuex;
+                              print('$index --- $value');
                               checkboxes.add(
-                                Checkbox(
+                                LetterCheckbox(
+                                  text: ['M','T','W','T','F','S','S'][index],
                                   value: value,
                                   onChanged: (bool newValue) {
                                     model.item['weekdays'][index] = newValue;
+                                    print(';;;;;');
+                                    print(model.item['weekdays']);
                                     model.rebuild();
                                   },
                                 ),
                               );
                             });
-                            return Row(children: checkboxes);
+                            return Wrap(
+                              children: checkboxes,
+                              // alignment: WrapAlignment.spaceBetween,
+                              // spacing: 4,
+                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            );
                           } else {
                             return Container();
                           }
@@ -387,6 +399,7 @@ class NotificationDialogState extends State<NotificationDialog> {
                       MaterialButton(
                         splashColor: Colors.transparent,
                         elevation: 0,
+                        textColor: !themeModel.darkMode && !saveDisabled() ? Colors.white : null,
                         onPressed: () {
                           titleHasChanged = true;
                           if (formKey.currentState.validate() &&
