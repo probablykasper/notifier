@@ -119,6 +119,7 @@ class NotificationDialogState extends State<NotificationDialog> {
             textInputAction: TextInputAction.next,
             decoration: InputDecoration(
               labelText: 'Title',
+              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
             autovalidate: true,
             validator: (value) {
@@ -142,6 +143,7 @@ class NotificationDialogState extends State<NotificationDialog> {
             maxLines: null,
             decoration: InputDecoration(
               labelText: 'Description',
+              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             ),
             onSaved: (String newValue) {
               model.item['description'] = newValue;
@@ -162,11 +164,11 @@ class NotificationDialogState extends State<NotificationDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Padding(
-                        padding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
+                        padding: EdgeInsets.only(left: 24, right: 24, top: 0, bottom: 8),
                         child: title,
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 24, right: 24, top: 8, bottom: 8),
+                        padding: EdgeInsets.only(left: 24, right: 24, top: 0, bottom: 8),
                         child: description,
                       ),
                       //* CANNOT BE SWIPED AWAY?
