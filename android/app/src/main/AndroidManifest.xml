@@ -14,7 +14,7 @@
     <application
         tools:replace="android:label"
         android:name="io.flutter.app.FlutterApplication"
-        android:label="notifier"
+        android:label="Notifier"
         android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
