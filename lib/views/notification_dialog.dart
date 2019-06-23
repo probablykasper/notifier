@@ -258,6 +258,10 @@ class NotificationDialogState extends State<NotificationDialog> {
                                       child: Text("Repeat Weekly"),
                                     ),
                                     DropdownMenuItem(
+                                      value: 'monthly',
+                                      child: Text("Repeat Monthly"),
+                                    ),
+                                    DropdownMenuItem(
                                       value: 'yearly',
                                       child: Text("Repeat Yearly"),
                                     ),
