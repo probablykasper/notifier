@@ -18,8 +18,10 @@ class NotificationDialog extends StatefulWidget {
 
   @override
   NotificationDialogState createState() {
-    if (mode == 'edit' && initialItem['date'] < DateTime.now().millisecondsSinceEpoch) {
-      // when editing a notification, don't start with a date in the past
+    if (mode == 'edit' &&
+        initialItem['repeat'] != 'never' &&
+        initialItem['date'] < DateTime.now().millisecondsSinceEpoch) {
+      // when editing a repeating notification, don't start with a date in the past
       initialItem['date'] = initialItem['nextDate'];
     }
     return NotificationDialogState(mode: mode, initialItem: initialItem, listModel: listModel);
