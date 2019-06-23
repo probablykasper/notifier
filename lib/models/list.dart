@@ -24,8 +24,8 @@ class ListModel extends Model {
     return UnmodifiableMapView(_notificationItems);
   }
 
-  List get itemsAsList {
-    List listOfItems = [];
+  List<Map<String, dynamic>> get itemsAsList {
+    List<Map<String, dynamic>> listOfItems = [];
     _notificationItems.forEach((index, item) {
       listOfItems.add(item);
     });
@@ -159,6 +159,8 @@ class ListModel extends Model {
         } else if (notificationItem['repeat'] == 'yearly') {
           newYear += notificationItem['repeatEvery'];
         }
+        if (notificationItem['repeat'] != 'never')
+          notificationItem['date'] = notificationItem['nextDate'];
         notificationItem['nextDate'] = DateTime(
           newYear,
           newMonth,
@@ -187,7 +189,6 @@ class ListModel extends Model {
     await _save();
     await _setNotifications();
     print('[notifier] ListModel add');
-
     notifyListeners();
   }
 

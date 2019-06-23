@@ -18,6 +18,10 @@ class NotificationDialog extends StatefulWidget {
 
   @override
   NotificationDialogState createState() {
+    if (mode == 'edit' && initialItem['date'] < DateTime.now().millisecondsSinceEpoch) {
+      // when editing a notification, don't start with a date in the past
+      initialItem['date'] = initialItem['nextDate'];
+    }
     return NotificationDialogState(mode: mode, initialItem: initialItem, listModel: listModel);
   }
 }
@@ -383,7 +387,9 @@ class NotificationDialogState extends State<NotificationDialog> {
                         elevation: 0,
                         onPressed: () {
                           titleHasChanged = true;
-                          if (formKey.currentState.validate() && !saveDisabled() && titleHasChanged) {
+                          if (formKey.currentState.validate() &&
+                              !saveDisabled() &&
+                              titleHasChanged) {
                             Navigator.of(context).pop();
                             formKey.currentState.save();
                             if (mode == 'new') {
