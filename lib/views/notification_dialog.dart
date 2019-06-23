@@ -327,31 +327,22 @@ class NotificationDialogState extends State<NotificationDialog> {
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 24),
                         child: (() {
-                          print(model.item['weekdays']);
                           if (model.item['repeat'] == 'weekly') {
                             List<LetterCheckbox> checkboxes = [];
                             model.item['weekdays'].asMap().forEach((index, valuex) {
                               bool value = valuex;
-                              print('$index --- $value');
                               checkboxes.add(
                                 LetterCheckbox(
-                                  text: ['M','T','W','T','F','S','S'][index],
+                                  text: 'MTWTFSS'[index],
                                   value: value,
                                   onChanged: (bool newValue) {
                                     model.item['weekdays'][index] = newValue;
-                                    print(';;;;;');
-                                    print(model.item['weekdays']);
                                     model.rebuild();
                                   },
                                 ),
                               );
                             });
-                            return Wrap(
-                              children: checkboxes,
-                              // alignment: WrapAlignment.spaceBetween,
-                              // spacing: 4,
-                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            );
+                            return Wrap(children: checkboxes);
                           } else {
                             return Container();
                           }

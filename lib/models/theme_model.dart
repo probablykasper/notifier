@@ -26,6 +26,9 @@ class ThemeModel extends Model {
         4: Color(0xFF43454c),
         5: Color(0xFF54565f),
         6: Color(0xFF676974),
+        7: Colors.grey[500],
+        8: Colors.grey[400],
+        9: Colors.grey[100],
       };
   Map<int, Color> get white => <int, Color>{
         1: Colors.grey[100],
@@ -34,6 +37,9 @@ class ThemeModel extends Model {
         4: Colors.grey[400],
         5: Colors.grey[500],
         6: Colors.grey[600],
+        7: Colors.grey[700],
+        8: Colors.grey[800],
+        9: Colors.grey[900],
       };
   Map<int, Color> color;
   Color textColor, backgroundColor, splashColor, highlightColor, appBarBackgroundColor, descriptionColor, primaryButtonColor, primaryButtonDisabledColor, errorText, checkboxEnabledColor, checkboxDisabledColor;
@@ -69,8 +75,8 @@ class ThemeModel extends Model {
     descriptionColor = color[6];
     primaryButtonColor = darkMode ? color[4] : blue;
     primaryButtonDisabledColor = color[4].withOpacity(0.5);
-    checkboxEnabledColor = darkMode ? color[4] : blue;
-    checkboxDisabledColor = darkMode ? primaryButtonColor : color[4];
+    checkboxEnabledColor = darkMode ? color[8] : blue;
+    checkboxDisabledColor = darkMode ? color[5] : color[6];
     splashColor = color[6].withOpacity(0.3);
     highlightColor = darkMode ? color[6].withOpacity(0.3) : color[6].withOpacity(0.2);
     appBarBackgroundColor = darkMode ? color[2] : blue;

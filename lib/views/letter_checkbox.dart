@@ -6,7 +6,6 @@ class CustomCheckboxModel extends Model {
   bool _value = false;
 
   bool get value => _value;
-
   CustomCheckboxModel({bool value}) {
     _value = value;
   }
@@ -31,17 +30,21 @@ class LetterCheckbox extends StatelessWidget {
       model: CustomCheckboxModel(value: value),
       child: ScopedModelDescendant<CustomCheckboxModel>(
         builder: (context, child, model) {
-          print('${model.value}');
-          return Padding(
-            padding: EdgeInsets.all(5),
-            child: GestureDetector(
-              onTap: () {
-                model.toggle();
-                onChanged(model.value);
-              },
-              child: Container(
-                width: 30,
-                height: 30,
+          double padding = 5;
+          return GestureDetector(
+            onTap: () {
+              model.toggle();
+            },
+            child: Container(
+              width: 30 + padding * 2,
+              height: 30 + padding * 2,
+              color: Colors.transparent,
+              alignment: Alignment.center,
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 80),
+                curve: Curves.ease,
+                width: model.value == true ? 30 : 26,
+                height: model.value == true ? 30 : 26,
                 alignment: Alignment(0.0, 0.0),
                 child: Text(
                   text,
@@ -53,14 +56,13 @@ class LetterCheckbox extends StatelessWidget {
                   ),
                 ),
                 decoration: new BoxDecoration(
-                  color: model.value == true ? themeModel.checkboxEnabledColor : Colors.transparent,
                   border: Border.all(
                     color: model.value == true
                         ? themeModel.checkboxEnabledColor
                         : themeModel.checkboxDisabledColor,
-                    width: 2,
+                    width: model.value == true ? 2.5 : 2,
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  borderRadius: BorderRadius.all(Radius.circular(50)),
                 ),
               ),
             ),
