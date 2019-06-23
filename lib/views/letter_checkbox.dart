@@ -52,7 +52,6 @@ class LetterCheckbox extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: !themeModel.darkMode && model.value == false ? null : Colors.white,
                   ),
                 ),
                 decoration: new BoxDecoration(

@@ -189,7 +189,7 @@ class NotificationDialogState extends State<NotificationDialog> {
                       ListTile(
                         contentPadding: EdgeInsets.symmetric(horizontal: 24),
                         leading: Icon(Icons.calendar_today),
-                        title: Text('Time'),
+                        title: Text('Time', style: TextStyle(color: themeModel.textColor)),
                         isThreeLine: timeHasPassed(),
                         // subtitle: Text(
                         //   DateFormat("MMMM d, y 'at' h:mm a").format(
@@ -203,12 +203,11 @@ class NotificationDialogState extends State<NotificationDialog> {
                                 text: DateFormat("MMMM d, y 'at' h:mm a").format(
                                   DateTime.fromMillisecondsSinceEpoch(model.item['date']),
                                 ),
+                                style: TextStyle(color: themeModel.textColor, fontFamily: 'Jost'),
                               ),
                               TextSpan(
-                                text: !timeHasPassed() ? '' : '\nTIme has passed',
-                                style: TextStyle(
-                                  color: themeModel.errorText,
-                                ),
+                                text: !timeHasPassed() ? '' : '\nTime has passed',
+                                style: TextStyle(color: themeModel.errorText, fontFamily: 'Jost'),
                               ),
                             ],
                           ),
@@ -239,7 +238,6 @@ class NotificationDialogState extends State<NotificationDialog> {
                                   value: state.value,
                                   elevation: 16,
                                   style: TextStyle(
-                                    inherit: true,
                                     fontFamily: 'Jost',
                                     color: themeModel.textColor,
                                     fontSize: 15,
