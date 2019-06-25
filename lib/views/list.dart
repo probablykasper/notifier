@@ -84,7 +84,8 @@ class List extends StatelessWidget {
                       builder: (BuildContext context) {
                         return NotificationDialog(
                           mode: 'edit',
-                          initialItem: item,
+                          // clone the item so it changes to it won't be saved
+                          initialItem: Map<String, dynamic>.from(item),
                           listModel: listModel,
                         );
                       },
