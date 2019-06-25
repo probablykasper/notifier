@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:notifier/models/theme_model.dart';
 import 'package:notifier/views/list.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -10,6 +11,13 @@ class App extends StatelessWidget {
       model: ThemeModel(),
       child: ScopedModelDescendant<ThemeModel>(
         builder: (context, child, themeModel) {
+          SystemChrome.setSystemUIOverlayStyle(
+            SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent, //status bar color
+              statusBarIconBrightness: Brightness.light, //status bar icons
+            ),
+          );
+          // FlutterStatusbarcolor.setStatusBarColor(Colors.white);
           return MaterialApp(
             title: 'Notifier',
             debugShowCheckedModeBanner: false,
