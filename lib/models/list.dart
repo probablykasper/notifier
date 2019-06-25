@@ -32,9 +32,9 @@ class ListModel extends Model {
     return listOfItems;
   }
 
-  ListModel({load: false}) {
+  ListModel() {
     print('[notifier] ListModel constructor');
-    if (load == true) _load();
+    _load();
     // initialize notification plugin:
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
@@ -181,9 +181,16 @@ class ListModel extends Model {
     print('[notifier] ListModel _save');
   }
 
-  void add(dynamic notificationItem) async {
-    final int idLen = 9;
-    final String id = Random.secure().nextInt(pow(10, idLen)).toString();
+  Future<String> _generateId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // notifications start at 1 because individual notification ids get extra digits added to the end
+    int id = 1 + (prefs.getInt('lastId') ?? 0);
+    await prefs.setInt('lastId', id);
+    return id.toString();
+  }
+
+  add(dynamic notificationItem) async {
+    final String id = await _generateId();
     notificationItem['id'] = id;
     _notificationItems[id] = notificationItem;
     await _save();
@@ -192,14 +199,14 @@ class ListModel extends Model {
     notifyListeners();
   }
 
-  void delete(String id) async {
+  delete(String id) async {
     _notificationItems.remove(id);
     await _save();
     print('[notifier] ListModel delete');
     notifyListeners();
   }
 
-  void update({String id, dynamic notificationItem}) async {
+  update({String id, dynamic notificationItem}) async {
     notificationItem['id'] = id;
     _notificationItems[id] = notificationItem;
     await _save();

@@ -17,7 +17,6 @@ class App extends StatelessWidget {
               statusBarIconBrightness: Brightness.light, //status bar icons
             ),
           );
-          // FlutterStatusbarcolor.setStatusBarColor(Colors.white);
           return MaterialApp(
             title: 'Notifier',
             debugShowCheckedModeBanner: false,
