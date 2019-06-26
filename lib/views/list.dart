@@ -77,8 +77,14 @@ class List extends StatelessWidget {
                 return InkWell(
                   splashColor: themeModel.splashColor,
                   highlightColor: themeModel.highlightColor,
-                  onTap: () {
-                    print("[notifier] Someone tapped me and it felt great");
+                  onTap: () async {
+                    if (item['repeat'] != 'never' &&
+                        item['date'] < DateTime.now().millisecondsSinceEpoch) {
+                      // make sure the date is not in the past for repeating notifications
+                      print('[notifier] Running setNotifications() before opening edit dialog');
+                      await listModel.setNotifications();
+                    }
+                    print("[notifier] Opening edit dialog");
                     return showDialog(
                       context: context,
                       builder: (BuildContext context) {

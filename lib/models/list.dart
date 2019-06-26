@@ -120,6 +120,18 @@ class ListModel extends Model {
     return DateTime(newYear, newMonth, newDay, date.hour, date.minute);
   }
 
+  cancelNotificationIfExists(String id) async {
+    List<PendingNotificationRequest> pendingNotifications =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    pendingNotifications.forEach((pendingNotification) {
+      String notificationId = pendingNotification.id.toString();
+      if (notificationId.length > 1) {
+        String pendingId = notificationId.substring(0, notificationId.length - 1);
+        if (id == pendingId) flutterLocalNotificationsPlugin.cancel(pendingNotification.id);
+      }
+    });
+  }
+
   setNotifications() async {
     print('[notifier] _setNotification');
 
@@ -142,15 +154,19 @@ class ListModel extends Model {
 
     List<PendingNotificationRequest> pendingNotifications =
         await flutterLocalNotificationsPlugin.pendingNotificationRequests();
-    List<int> pendingNotificationIds = pendingNotifications.map((pendingNotification) {
-      return pendingNotification.id;
+    List<int> pendingNotificationItemIds = pendingNotifications.map((pendingNotification) {
+      if (pendingNotification.id.toString().length > 1)
+        return pendingNotification.id;
+      else
+        return null;
     }).toList();
 
     _notificationItems.forEach((id, notificationItem) {
       int next48h = DateTime.now().add(Duration(hours: 48)).millisecondsSinceEpoch;
-      if (!pendingNotificationIds.contains(notificationItem['id']) &&
+      if (!pendingNotificationItemIds.contains(notificationItem['id']) &&
           notificationItem['date'] < next48h &&
           notificationItem['disabled'] == false) {
+
         // date to scheduel notification to now
         DateTime date = DateTime.fromMillisecondsSinceEpoch(notificationItem['date']);
         // date to scheduel notification to next time
@@ -161,19 +177,27 @@ class ListModel extends Model {
           weekdays: List<bool>.from(notificationItem['weekdays']),
         );
 
+        // Only set date to nextDate if the notification has already fired. The date needs to be the closest future notification date. When notifications are scheduled for the first time, their date should therefore not be updated.
+        if (notificationItem['date'] < DateTime.now().millisecondsSinceEpoch) {
+          date = nextDate;
+          notificationItem['date'] = nextDate.millisecondsSinceEpoch;
+        }
+
+        String oneDigitFiredCount = (notificationItem['firedCount'] % 10).toString();
+        // notificationId: individual notification's id.
+        int notificationId = int.parse(id + oneDigitFiredCount);
         flutterLocalNotificationsPlugin.schedule(
-          int.parse(id),
+          notificationId,
           notificationItem['title'],
           notificationItem['description'],
           date,
           platformChannelSpecifics,
         );
+        notificationItem['firedCount']++;
         print(
-            "[notifier] notification $id ('${notificationItem['title']}') has been scheduled for $date. Next date: $nextDate");
+            "[notifier] notification $id-$oneDigitFiredCount ('${notificationItem['title']}') has been scheduled for $date. Next date: $nextDate");
 
-        notificationItem['date'] = nextDate.millisecondsSinceEpoch;
         if (notificationItem['repeat'] == 'never') notificationItem['disabled'] = true;
-
       }
     });
   }
@@ -204,6 +228,12 @@ class ListModel extends Model {
 
   delete(String id) async {
     _notificationItems.remove(id);
+    List<PendingNotificationRequest> pendingNotifications =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    print(pendingNotifications.length);
+    await cancelNotificationIfExists(id);
+    List<PendingNotificationRequest> pendingNotifications2 = await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    print('[notifier] Cancelled ${pendingNotifications.length} scheduled notifications');
     await _save();
     print('[notifier] ListModel delete');
     notifyListeners();
@@ -213,6 +243,12 @@ class ListModel extends Model {
     notificationItem['id'] = id;
     notificationItem['disabled'] = false;
     _notificationItems[id] = notificationItem;
+    List<PendingNotificationRequest> pendingNotifications =
+        await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    print(pendingNotifications.length);
+    await cancelNotificationIfExists(id);
+    List<PendingNotificationRequest> pendingNotifications2 = await flutterLocalNotificationsPlugin.pendingNotificationRequests();
+    print('[notifier] Cancelled ${pendingNotifications.length} scheduled notifications');
     await _save();
     await setNotifications();
     print('[notifier] ListModel update');
