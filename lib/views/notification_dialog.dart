@@ -23,7 +23,7 @@ class NotificationDialog extends StatefulWidget {
         initialItem['repeat'] != 'never' &&
         initialItem['date'] < DateTime.now().millisecondsSinceEpoch) {
       // when editing a repeating notification, don't start with a date in the past
-      initialItem['date'] = initialItem['nextDate'];
+      listModel.setNotifications();
     }
     return NotificationDialogState(mode: mode, initialItem: initialItem, listModel: listModel);
   }
@@ -80,7 +80,6 @@ class NotificationDialogState extends State<NotificationDialog> {
       pickedTime.minute,
     );
     model.item['date'] = newDate.millisecondsSinceEpoch;
-    model.item['nextDate'] = newDate.millisecondsSinceEpoch;
   }
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();

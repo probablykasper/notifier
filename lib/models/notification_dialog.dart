@@ -18,7 +18,7 @@ class NotificationDialogModel extends Model {
       'weekdays': weekdays,
       'noSwipeAway': false,
       'date': defaultDate.millisecondsSinceEpoch,
-      'nextDate': defaultDate.millisecondsSinceEpoch,
+      'disabled': false, // actual times notification has fired can be 1 higher
     };
   }
 

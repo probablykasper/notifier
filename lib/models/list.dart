@@ -1,7 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:core';
-import 'dart:math';
 import 'dart:ui';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -75,7 +74,7 @@ class ListModel extends Model {
       print('[BackgroundFetch] Event received');
       // IMPORTANT:  You must signal completion of your fetch task or the OS can punish your app
       // for taking too long in the background.
-      await _setNotifications();
+      await setNotifications();
       BackgroundFetch.finish();
     }).then((int status) {
       print('[BackgroundFetch] SUCCESS: $status');
@@ -84,7 +83,44 @@ class ListModel extends Model {
     });
   }
 
-  _setNotifications() async {
+  DateTime getNextDate({DateTime date, String repeat, int repeatEvery, List<bool> weekdays}) {
+    int newDay = date.day;
+    int newMonth = date.month;
+    int newYear = date.year;
+
+    if (repeat == 'daily') {
+      newDay += repeatEvery;
+    } else if (repeat == 'weekly') {
+      int firstCheckedWeekday = weekdays.indexOf(true);
+      // i = x days in the future. Starts with tomorrow:
+      int i = 1;
+      while (i != 100) {
+        if (date.weekday + i == 7) {
+          // ^ done looping through this week
+          // set to monday next week:
+          newDay += i;
+          // skip weeks:
+          newDay += 7 * repeatEvery - 1;
+          // set to next checked weekday:
+          newDay += firstCheckedWeekday;
+        } else if (weekdays[date.weekday - 1] == true) {
+          // ^ weekday is checked
+          newDay += i;
+          i = 100;
+        } else {
+          // ^ weekday is not checked
+          i++;
+        }
+      }
+    } else if (repeat == 'monthly') {
+      newMonth += repeatEvery;
+    } else if (repeat == 'yearly') {
+      newYear += repeatEvery;
+    }
+    return DateTime(newYear, newMonth, newDay, date.hour, date.minute);
+  }
+
+  setNotifications() async {
     print('[notifier] _setNotification');
 
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
@@ -109,68 +145,35 @@ class ListModel extends Model {
     List<int> pendingNotificationIds = pendingNotifications.map((pendingNotification) {
       return pendingNotification.id;
     }).toList();
-    _notificationItems.forEach((idString, notificationItem) {
-      int id = int.parse(idString);
-      int next24h = DateTime.now().add(Duration(hours: 24)).millisecondsSinceEpoch;
+
+    _notificationItems.forEach((id, notificationItem) {
+      int next48h = DateTime.now().add(Duration(hours: 48)).millisecondsSinceEpoch;
       if (!pendingNotificationIds.contains(notificationItem['id']) &&
-          notificationItem['nextDate'] < next24h &&
-          notificationItem['nextDate'] > 0) {
-        DateTime nextDate = DateTime.fromMillisecondsSinceEpoch(notificationItem['nextDate']);
+          notificationItem['date'] < next48h &&
+          notificationItem['disabled'] == false) {
+        // date to scheduel notification to now
+        DateTime date = DateTime.fromMillisecondsSinceEpoch(notificationItem['date']);
+        // date to scheduel notification to next time
+        DateTime nextDate = getNextDate(
+          date: date,
+          repeat: notificationItem['repeat'],
+          repeatEvery: notificationItem['repeatEvery'],
+          weekdays: List<bool>.from(notificationItem['weekdays']),
+        );
+
         flutterLocalNotificationsPlugin.schedule(
-          id,
+          int.parse(id),
           notificationItem['title'],
           notificationItem['description'],
-          nextDate,
+          date,
           platformChannelSpecifics,
         );
-        int newDay = nextDate.day;
-        int newMonth = nextDate.month;
-        int newYear = nextDate.year;
-        if (notificationItem['repeat'] == 'daily') {
-          newDay += notificationItem['repeatEvery'];
-        } else if (notificationItem['repeat'] == 'weekly') {
-          List weekdays = notificationItem['weekdays'];
-          int firstCheckedWeekday;
-          for (int i = 0; i < 7; i++) {
-            if (weekdays[i] == true) firstCheckedWeekday = i;
-          }
-          // i = x days in the future. Starts with tomorrow:
-          int i = 1;
-          while (i != 100) {
-            if (nextDate.weekday + i == 7) {
-              // ^ done looping through this week
-              // set to monday next week:
-              newDay += i;
-              // skip weeks:
-              newDay += 7 * notificationItem['repeatEvery'] - 1;
-              // set to next checked weekday:
-              newDay += firstCheckedWeekday;
-            } else if (weekdays[nextDate.weekday - 1] == true) {
-              // ^ weekday is checked
-              newDay += i;
-              i = 100;
-            } else {
-              // ^ weekday is not checked
-              i++;
-            }
-          }
-        } else if (notificationItem['repeat'] == 'monthly') {
-          newMonth += notificationItem['repeatEvery'];
-        } else if (notificationItem['repeat'] == 'yearly') {
-          newYear += notificationItem['repeatEvery'];
-        }
-        if (notificationItem['repeat'] != 'never')
-          notificationItem['date'] = notificationItem['nextDate'];
-        notificationItem['nextDate'] = DateTime(
-          newYear,
-          newMonth,
-          newDay,
-          nextDate.hour,
-          nextDate.minute,
-        ).millisecondsSinceEpoch;
-        if (notificationItem['repeat'] == 'never') notificationItem['nextDate'] = 0;
         print(
-            "[notifier] notification $id ('${notificationItem['title']}') has been scheduled for $nextDate. Next notification: ${notificationItem['nextDate']}");
+            "[notifier] notification $id ('${notificationItem['title']}') has been scheduled for $date. Next date: $nextDate");
+
+        notificationItem['date'] = nextDate.millisecondsSinceEpoch;
+        if (notificationItem['repeat'] == 'never') notificationItem['disabled'] = true;
+
       }
     });
   }
@@ -194,7 +197,7 @@ class ListModel extends Model {
     notificationItem['id'] = id;
     _notificationItems[id] = notificationItem;
     await _save();
-    await _setNotifications();
+    await setNotifications();
     print('[notifier] ListModel add');
     notifyListeners();
   }
@@ -208,9 +211,10 @@ class ListModel extends Model {
 
   update({String id, dynamic notificationItem}) async {
     notificationItem['id'] = id;
+    notificationItem['disabled'] = false;
     _notificationItems[id] = notificationItem;
     await _save();
-    await _setNotifications();
+    await setNotifications();
     print('[notifier] ListModel update');
     notifyListeners();
   }
