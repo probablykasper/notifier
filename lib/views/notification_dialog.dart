@@ -30,7 +30,7 @@ class NotificationDialogState extends State<NotificationDialog> {
 
   NotificationDialogState({this.mode, this.initialItem, this.listModel});
 
-  Future _pickDateTime(BuildContext context, NotificationDialogModel model) async {
+  Future<void> _pickDateTime(BuildContext context, NotificationDialogModel model) async {
     final themeModel = ScopedModel.of<ThemeModel>(context);
     final firstDate = DateTime.now().subtract(Duration(days: 1));
     var initialDateTime = DateTime.fromMillisecondsSinceEpoch(model.item['date']);
