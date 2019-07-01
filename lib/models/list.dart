@@ -65,7 +65,7 @@ class ListModel extends Model {
     // Configure BackgroundFetch.
     BackgroundFetch.configure(
         BackgroundFetchConfig(
-          minimumFetchInterval: 15,
+          minimumFetchInterval: 60*8,
           stopOnTerminate: false,
           enableHeadless: true,
           startOnBoot: true,
@@ -161,20 +161,16 @@ class ListModel extends Model {
       else
         return null;
     }).toList();
-    print('[notifier] ${pendingNotificationItemIds.length} items are currently scheduled');
-
-    print('========:::');
-    print(pendingNotificationItemIds);
+    print('[notifier] ${pendingNotificationItemIds.length} items are currently scheduled:');
+    print('[notifier] $pendingNotificationItemIds');
     _notificationItems.forEach((id, notificationItem) {
-      print(':::------');
-      print(notificationItem['id']);
       int next48h = DateTime.now().add(Duration(hours: 48)).millisecondsSinceEpoch;
       if (!pendingNotificationItemIds.contains(notificationItem['id']) &&
           notificationItem['date'] < next48h &&
           notificationItem['disabled'] == false) {
-        // date to scheduel notification to now
+        // date to schedule notification to now
         DateTime date = DateTime.fromMillisecondsSinceEpoch(notificationItem['date']);
-        // date to scheduel notification to next time
+        // date to schedule notification to next time
         DateTime nextDate = getNextDate(
           date: date,
           repeat: notificationItem['repeat'],
