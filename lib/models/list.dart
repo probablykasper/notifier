@@ -194,7 +194,6 @@ class ListModel extends Model {
           date,
           platformChannelSpecifics,
         );
-        notificationItem['firedCount']++;
         print(
             "[notifier] notification $id-$oneDigitFiredCount ('${notificationItem['title']}') has been scheduled for $date. Next date: $nextDate");
 

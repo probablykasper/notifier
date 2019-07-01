@@ -334,6 +334,7 @@ class NotificationDialogState extends State<NotificationDialog> {
                                   value: value,
                                   onChanged: (bool newValue) {
                                     model.item['weekdays'][index] = newValue;
+                                    print(model.item['weekdays']);
                                     model.rebuild();
                                   },
                                 ),

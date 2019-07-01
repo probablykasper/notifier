@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:notifier/models/theme_model.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class CustomCheckboxModel extends Model {
+class LetterCheckboxModel extends Model {
   bool _value = false;
 
   bool get value => _value;
-  CustomCheckboxModel({bool value}) {
+  LetterCheckboxModel({bool value}) {
     _value = value;
   }
 
-  void toggle() {
+  bool toggle() {
     _value = !_value;
     notifyListeners();
+    return _value;
   }
 }
 
@@ -26,14 +27,15 @@ class LetterCheckbox extends StatelessWidget {
   @override
   Widget build(context) {
     final themeModel = ScopedModel.of<ThemeModel>(context);
-    return ScopedModel<CustomCheckboxModel>(
-      model: CustomCheckboxModel(value: value),
-      child: ScopedModelDescendant<CustomCheckboxModel>(
+    return ScopedModel<LetterCheckboxModel>(
+      model: LetterCheckboxModel(value: value),
+      child: ScopedModelDescendant<LetterCheckboxModel>(
         builder: (context, child, model) {
           double padding = 5;
           return GestureDetector(
             onTap: () {
-              model.toggle();
+              bool newValue = model.toggle();
+              onChanged(newValue);
             },
             child: Container(
               width: 30 + padding * 2,
@@ -66,10 +68,6 @@ class LetterCheckbox extends StatelessWidget {
               ),
             ),
           );
-          // return Checkbox(
-          //   value: model.value,
-          //   onChanged: this.onChanged,
-          // );
         },
       ),
     );
