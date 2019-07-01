@@ -33,7 +33,7 @@ class NotificationDialogState extends State<NotificationDialog> {
   Future<void> _pickDateTime(BuildContext context, NotificationDialogModel model) async {
     final themeModel = ScopedModel.of<ThemeModel>(context);
     final firstDate = DateTime.now().subtract(Duration(days: 1));
-    var initialDateTime = DateTime.fromMillisecondsSinceEpoch(model.item['date']);
+    DateTime initialDateTime = DateTime.fromMillisecondsSinceEpoch(model.item['date']);
     if (initialDateTime.isBefore(firstDate)) {
       initialDateTime = firstDate;
     }
@@ -74,6 +74,7 @@ class NotificationDialogState extends State<NotificationDialog> {
       pickedTime.minute,
     );
     model.item['date'] = newDate.millisecondsSinceEpoch;
+    model.rebuild();
   }
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -208,16 +209,18 @@ class NotificationDialogState extends State<NotificationDialog> {
                           ),
                         ),
                         onTap: () async {
+                          descriptionFocusNode.unfocus();
                           print('[notifier] Selecting date');
                           await _pickDateTime(context, model);
-                          model.rebuild();
+                          final notificationItemModel = ScopedModel.of<NotificationDialogModel>(context);
+                          notificationItemModel.rebuild();
                         },
                       ),
-                      //* REPEAT
                       Container(
                         padding: EdgeInsets.symmetric(horizontal: 24),
                         child: Row(
                           children: <Widget>[
+                            //* REPEAT
                             FormField(
                               initialValue: model.item['repeat'],
                               onSaved: (newValue) {
@@ -270,6 +273,7 @@ class NotificationDialogState extends State<NotificationDialog> {
                                 return Text('every', style: TextStyle(fontSize: 15));
                               }
                             })(),
+                            //* REPEAT EVERY
                             Container(width: 6),
                             (() {
                               if (model.item['repeat'] == 'never') {
