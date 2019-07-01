@@ -65,7 +65,7 @@ class ListModel extends Model {
     // Configure BackgroundFetch.
     BackgroundFetch.configure(
         BackgroundFetchConfig(
-          minimumFetchInterval: 60*8,
+          minimumFetchInterval: 60 * 8,
           stopOnTerminate: false,
           enableHeadless: true,
           startOnBoot: true,
@@ -91,27 +91,34 @@ class ListModel extends Model {
     if (repeat == 'daily') {
       newDay += repeatEvery;
     } else if (repeat == 'weekly') {
-      int firstCheckedWeekday = weekdays.indexOf(true);
-      // i = x days in the future. Starts with tomorrow:
-      int i = 1;
-      while (i != 100) {
-        if (date.weekday + i == 7) {
-          // ^ done looping through this week
-          // set to monday next week:
-          newDay += i;
-          // skip weeks:
-          newDay += 7 * repeatEvery - 1;
-          // set to next checked weekday:
-          newDay += firstCheckedWeekday;
-        } else if (weekdays[date.weekday - 1] == true) {
-          // ^ weekday is checked
-          newDay += i;
-          i = 100;
-        } else {
-          // ^ weekday is not checked
-          i++;
-        }
+      print('111');
+
+      // get the zero-based weekday of date
+      int dateWeekday = date.weekday - 1;
+      // get the index of the first checked weekday, starting from tomorrow
+      int nextCheckedWeekdayInThisWeek = weekdays.indexOf(true, dateWeekday + 1);
+
+      // if there is an upcoming checked weekday this week
+      if (nextCheckedWeekdayInThisWeek >= 0) {
+        // set newDay to the difference between the next checked weekday and today
+        newDay += nextCheckedWeekdayInThisWeek - dateWeekday;
       }
+
+      // if there is no upcoming checked weekday this week
+      if (nextCheckedWeekdayInThisWeek == -1) {
+        // find how many days left till monday next week. If it's currently monday (0), that's 7 days
+        int daysTillMonday = (7 - dateWeekday);
+        // set newDay to monday next week
+        newDay += daysTillMonday;
+        
+        // skip weeks. If it's repeated every 2 week, add 7 days to newDay
+        newDay += (7 * repeatEvery) - 1;
+
+        // set newDay to the next checked weekday
+        int firstCheckedWeekday = weekdays.indexOf(true);
+        newDay += firstCheckedWeekday;
+      }
+
     } else if (repeat == 'monthly') {
       newMonth += repeatEvery;
     } else if (repeat == 'yearly') {
