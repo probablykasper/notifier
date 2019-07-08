@@ -193,7 +193,7 @@ class ListModel extends Model {
             weekdays: List<bool>.from(notificationItem['weekdays']),
           );
           // if the app was installed after nextDate, get skip over this date and get the next nextDate. This is for when you reinstall the app and get your old notifications loaded (e.g via google backup).
-          if (installDate.millisecondsSinceEpoch > nextDate.millisecondsSinceEpoch) {
+          if (installDate.millisecondsSinceEpoch < nextDate.millisecondsSinceEpoch) {
             done = true;
           }
         }
