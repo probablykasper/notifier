@@ -2,6 +2,8 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:core';
 import 'dart:ui';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -110,7 +112,7 @@ class ListModel extends Model {
         int daysTillMonday = (7 - dateWeekday);
         // set newDay to monday next week
         newDay += daysTillMonday;
-        
+
         // skip weeks. If it's repeated every 2 week, add 7 days to newDay
         newDay += (7 * repeatEvery) - 1;
 
@@ -118,7 +120,6 @@ class ListModel extends Model {
         int firstCheckedWeekday = weekdays.indexOf(true);
         newDay += firstCheckedWeekday;
       }
-
     } else if (repeat == 'monthly') {
       newMonth += repeatEvery;
     } else if (repeat == 'yearly') {
@@ -141,6 +142,10 @@ class ListModel extends Model {
 
   setNotifications() async {
     print('[notifier] _setNotification');
+
+    const platform = MethodChannel('space.kasper.notifier/get_install_date');
+    String installDateInt = await platform.invokeMethod('get_install_date');
+    DateTime installDate = DateTime.fromMillisecondsSinceEpoch(int.parse(installDateInt));
 
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'scheduled_notifications',
@@ -178,12 +183,20 @@ class ListModel extends Model {
         // date to schedule notification to now
         DateTime date = DateTime.fromMillisecondsSinceEpoch(notificationItem['date']);
         // date to schedule notification to next time
-        DateTime nextDate = getNextDate(
-          date: date,
-          repeat: notificationItem['repeat'],
-          repeatEvery: notificationItem['repeatEvery'],
-          weekdays: List<bool>.from(notificationItem['weekdays']),
-        );
+        bool done = false;
+        DateTime nextDate;
+        while (!done) {
+          nextDate = getNextDate(
+            date: date,
+            repeat: notificationItem['repeat'],
+            repeatEvery: notificationItem['repeatEvery'],
+            weekdays: List<bool>.from(notificationItem['weekdays']),
+          );
+          // if the app was installed after nextDate, get skip over this date and get the next nextDate. This is for when you reinstall the app and get your old notifications loaded (e.g via google backup).
+          if (installDate.millisecondsSinceEpoch > nextDate.millisecondsSinceEpoch) {
+            done = true;
+          }
+        }
 
         // Only set date to nextDate if the notification has already fired. The date needs to be the closest future notification date. When notifications are scheduled for the first time, their date should therefore not be updated.
         if (notificationItem['date'] < DateTime.now().millisecondsSinceEpoch) {
