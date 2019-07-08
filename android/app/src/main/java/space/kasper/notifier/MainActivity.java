@@ -1,4 +1,4 @@
-package com.example.notifier;
+package space.kasper.notifier;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
