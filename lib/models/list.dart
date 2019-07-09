@@ -239,10 +239,12 @@ class ListModel extends Model {
           weekdays: List<bool>.from(notificationItem['weekdays']),
         );
 
-        // Only set date to nextDate if the notification has already fired. The date needs to be the closest future notification date. When notifications are scheduled for the first time, their date should therefore not be updated.
         if (notificationItem['date'] < DateTime.now().millisecondsSinceEpoch) {
+          // Only set date to nextDate if the notification has already fired. The date needs to be the closest future notification date. When notifications are scheduled for the first time, their date should therefore not be updated.
           date = nextDate;
           notificationItem['date'] = nextDate.millisecondsSinceEpoch;
+
+          notificationItem['firedCount']++;
         }
 
         String oneDigitFiredCount = (notificationItem['firedCount'] % 10).toString();
