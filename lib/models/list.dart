@@ -33,9 +33,9 @@ class ListModel extends Model {
     return listOfItems;
   }
 
-  ListModel() {
+  ListModel({bool checkForDisabledNotifications: false}) {
     print('[notifier] ListModel constructor');
-    _load();
+    _load(checkForDisabledNotifications: checkForDisabledNotifications);
     // initialize notification plugin:
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
@@ -47,7 +47,31 @@ class ListModel extends Model {
     flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
-  _load() async {
+  checkForDisabledNotifications() async {
+    print('Starting checkForDisabledNotifications()');
+    Timer.periodic(
+      Duration(milliseconds: 500),
+      (timer) {
+        bool changedWereMade = false;
+        _notificationItems.forEach((id, notificationItem) {
+          if (notificationItem['willDisable'] == true) {
+            if (notificationItem['date'] < DateTime.now().millisecondsSinceEpoch) {
+              notificationItem['status'] = 'disabled';
+              notificationItem['willDisable'] = false;
+              changedWereMade = true;
+            }
+          }
+        });
+        if (changedWereMade) {
+          print('changedWereMade');
+          _save();
+          rebuild();
+        }
+      },
+    );
+  }
+
+  _load({bool checkForDisabledNotifications: false}) async {
     print('[notifier] listModel _load()');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String notificationItems = prefs.getString('notificationItems') ?? '{}';
@@ -60,6 +84,8 @@ class ListModel extends Model {
 
     print('[notifier] ListModel _load');
     notifyListeners();
+    if (checkForDisabledNotifications) this.checkForDisabledNotifications();
+    rebuild();
   }
 
   rebuild() async {
@@ -157,7 +183,7 @@ class ListModel extends Model {
   }
 
   setNotifications({@required bool appIsOpen}) async {
-    print('[notifier] _setNotification');
+    print('[notifier] _setNotifications');
 
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'scheduled_notifications',
