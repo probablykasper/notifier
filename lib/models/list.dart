@@ -62,6 +62,10 @@ class ListModel extends Model {
     notifyListeners();
   }
 
+  rebuild() async {
+    notifyListeners();
+  }
+
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> configureBackgroundFetch() async {
     // Configure BackgroundFetch.
@@ -76,7 +80,7 @@ class ListModel extends Model {
       print('[BackgroundFetch] Event received');
       // IMPORTANT:  You must signal completion of your fetch task or the OS can punish your app
       // for taking too long in the background.
-      await setNotifications();
+      await setNotifications(appIsOpen: false);
       BackgroundFetch.finish();
     }).then((int status) {
       print('[BackgroundFetch] SUCCESS: $status');
@@ -140,7 +144,7 @@ class ListModel extends Model {
     });
   }
 
-  setNotifications() async {
+  setNotifications({@required bool appIsOpen}) async {
     print('[notifier] _setNotification');
 
     const platform = MethodChannel('space.kasper.notifier/get_install_date');
@@ -179,7 +183,18 @@ class ListModel extends Model {
       int next48h = DateTime.now().add(Duration(hours: 48)).millisecondsSinceEpoch;
       if (!pendingNotificationItemIds.contains(notificationItem['id']) &&
           notificationItem['date'] < next48h &&
-          notificationItem['disabled'] == false) {
+          notificationItem['status'] == 'enabled') {
+
+        // if the notification willBeDisabled, don't schedule a new notification
+        if (notificationItem['repeat'] == 'never' && notificationItem['willDisable'] == true) {
+          // if the notification date is in the past, disable the notification
+          if (notificationItem['date'] < DateTime.now().millisecondsSinceEpoch) {
+            notificationItem['status'] = 'disabled';
+            if (appIsOpen == true) rebuild();
+          }
+          return;
+        }
+            
         // date to schedule notification to now
         DateTime date = DateTime.fromMillisecondsSinceEpoch(notificationItem['date']);
         // date to schedule notification to next time
@@ -217,7 +232,10 @@ class ListModel extends Model {
         print(
             "[notifier] notification $id-$oneDigitFiredCount ('${notificationItem['title']}') has been scheduled for $date. Next date: $nextDate");
 
-        if (notificationItem['repeat'] == 'never') notificationItem['disabled'] = true;
+        if (notificationItem['repeat'] == 'never') {
+          notificationItem['willDisable'] = true;
+          if (appIsOpen == true) rebuild();
+        }
       }
     });
   }
@@ -241,7 +259,7 @@ class ListModel extends Model {
     notificationItem['id'] = id;
     _notificationItems[id] = notificationItem;
     await _save();
-    await setNotifications();
+    await setNotifications(appIsOpen: true);
     print('[notifier] ListModel add');
     notifyListeners();
   }
@@ -264,7 +282,7 @@ class ListModel extends Model {
 
   update({String id, dynamic notificationItem}) async {
     notificationItem['id'] = id;
-    notificationItem['disabled'] = false;
+    notificationItem['status'] = 'enabled';
     _notificationItems[id] = notificationItem;
 
     List pastPendingNotifications =
@@ -276,7 +294,8 @@ class ListModel extends Model {
         '[notifier] Cancelled ${pastPendingNotifications.length - currentPendingNotifications.length} scheduled notifications');
 
     await _save();
-    await setNotifications();
+    await setNotifications(appIsOpen: true);
+    rebuild();
     print('[notifier] ListModel update');
     notifyListeners();
   }

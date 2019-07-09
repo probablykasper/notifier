@@ -82,7 +82,7 @@ class List extends StatelessWidget {
                         item['date'] < DateTime.now().millisecondsSinceEpoch) {
                       // make sure the date is not in the past for repeating notifications
                       print('[notifier] Running setNotifications() before opening edit dialog');
-                      await listModel.setNotifications();
+                      await listModel.setNotifications(appIsOpen: true);
                     }
                     print("[notifier] Opening edit dialog");
                     return showDialog(
@@ -98,24 +98,58 @@ class List extends StatelessWidget {
                     );
                   },
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 24.0, horizontal: 32.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item['title'],
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
+                    padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                    child: Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Switch(
+                          value: item['status'] == 'enabled',
+                          onChanged: (bool newValue) {
+                            if (newValue == true) {
+                              if (item['repeat'] == 'never' &&
+                                      item['date'] < DateTime.now().millisecondsSinceEpoch) {
+                                return showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return NotificationDialog(
+                                      mode: 'edit',
+                                      // clone the item so it changes to it won't be saved
+                                      initialItem: Map<String, dynamic>.from(item),
+                                      listModel: listModel,
+                                    );
+                                  },
+                                );
+                              } else {
+                                item['status'] = 'enabled';
+                                listModel.setNotifications(appIsOpen: true);
+                              }
+                            } else {
+                              item['status'] = 'disabled';
+                              listModel.cancelNotificationIfExists(item['id']);
+                            }
+                            listModel.rebuild();
+                          },
                         ),
-                        Text(
-                          item['description'],
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: themeModel.descriptionColor,
-                          ),
+                        Container(width: 16),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item['title'],
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              item['description'],
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: themeModel.descriptionColor,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

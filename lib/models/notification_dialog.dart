@@ -19,7 +19,8 @@ class NotificationDialogModel extends Model {
       'noSwipeAway': false,
       'date': defaultDate.millisecondsSinceEpoch,
       'firedCount': 0, // actual times notification has fired can be 1 higher
-      'disabled': false, // actual times notification has fired can be 1 higher
+      'status': 'enabled',
+      'willDisable': false, // if the notification will be disabled after it fires next time
     };
   }
 
