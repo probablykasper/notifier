@@ -128,7 +128,6 @@ class ListModel extends Model {
     if (repeat == 'daily') {
       newDay += repeatEvery;
     } else if (repeat == 'weekly') {
-
       // get the zero-based weekday of date
       int dateWeekday = date.weekday - 1;
       // get the index of the first checked weekday, starting from tomorrow
@@ -147,8 +146,8 @@ class ListModel extends Model {
         // set newDay to monday next week
         newDay += daysTillMonday;
 
-        // skip weeks. If it's repeated every 2 week, add 7 days to newDay
-        newDay += (7 * repeatEvery) - 1;
+        // skip weeks. If it's repeated every 2 weeks, add 7 days to newDay
+        newDay += (7 * repeatEvery) - 7 * 1;
 
         // set newDay to the next checked weekday
         int firstCheckedWeekday = weekdays.indexOf(true);
@@ -211,7 +210,8 @@ class ListModel extends Model {
       else
         return null;
     }).toList();
-    print('[notifier] ListModel setNotifications(): ${pendingNotificationItemIds.length} items are currently scheduled: $pendingNotificationItemIds');
+    print(
+        '[notifier] ListModel setNotifications(): ${pendingNotificationItemIds.length} items are currently scheduled: $pendingNotificationItemIds');
     _notificationItems.forEach((id, notificationItem) {
       int next48h = DateTime.now().add(Duration(hours: 48)).millisecondsSinceEpoch;
       if (!pendingNotificationItemIds.contains(notificationItem['id']) &&
