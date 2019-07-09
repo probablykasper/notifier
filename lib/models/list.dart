@@ -247,9 +247,10 @@ class ListModel extends Model {
           notificationItem['firedCount']++;
         }
 
-        String oneDigitFiredCount = (notificationItem['firedCount'] % 10).toString();
+        String twoDigitFiredCount = (notificationItem['firedCount'] % 100).toString();
+        if (twoDigitFiredCount.length == 1) twoDigitFiredCount = '0' + twoDigitFiredCount;
         // notificationId: individual notification's id.
-        int notificationId = int.parse(id + oneDigitFiredCount);
+        int notificationId = int.parse(id + twoDigitFiredCount);
         flutterLocalNotificationsPlugin.schedule(
           notificationId,
           notificationItem['title'],
@@ -258,7 +259,7 @@ class ListModel extends Model {
           platformChannelSpecifics,
         );
         print(
-            "[notifier] ListModel setNotifications(): notification $id-$oneDigitFiredCount ('${notificationItem['title']}') has been scheduled for $date. Next date: $nextDate");
+            "[notifier] ListModel setNotifications(): notification $id-$twoDigitFiredCount ('${notificationItem['title']}') has been scheduled for $date. Next date: $nextDate");
 
         if (notificationItem['repeat'] == 'never') {
           notificationItem['willDisable'] = true;
