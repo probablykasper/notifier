@@ -1,9 +1,9 @@
+import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
 import 'dart:core';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -78,9 +78,13 @@ class ListModel extends Model {
         ), () async {
       // This is the fetch-event callback.
       print('[BackgroundFetch] Event received');
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setInt('lastBackgroundFetchDate', DateTime.now().millisecondsSinceEpoch);
+
+      await setNotifications(appIsOpen: false);
       // IMPORTANT:  You must signal completion of your fetch task or the OS can punish your app
       // for taking too long in the background.
-      await setNotifications(appIsOpen: false);
       BackgroundFetch.finish();
     }).then((int status) {
       print('[BackgroundFetch] SUCCESS: $status');
@@ -142,14 +146,18 @@ class ListModel extends Model {
         if (id == pendingId) flutterLocalNotificationsPlugin.cancel(pendingNotification.id);
       }
     });
+    _save();
+  }
+
+  disableAll() async {
+    _notificationItems.forEach((id, notificationItem) {
+      notificationItem['status'] = 'disabled';
+    });
+    _save();
   }
 
   setNotifications({@required bool appIsOpen}) async {
     print('[notifier] _setNotification');
-
-    const platform = MethodChannel('space.kasper.notifier/get_install_date');
-    String installDateInt = await platform.invokeMethod('get_install_date');
-    DateTime installDate = DateTime.fromMillisecondsSinceEpoch(int.parse(installDateInt));
 
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'scheduled_notifications',
@@ -184,34 +192,27 @@ class ListModel extends Model {
       if (!pendingNotificationItemIds.contains(notificationItem['id']) &&
           notificationItem['date'] < next48h &&
           notificationItem['status'] == 'enabled') {
-
         // if the notification willBeDisabled, don't schedule a new notification
         if (notificationItem['repeat'] == 'never' && notificationItem['willDisable'] == true) {
           // if the notification date is in the past, disable the notification
           if (notificationItem['date'] < DateTime.now().millisecondsSinceEpoch) {
             notificationItem['status'] = 'disabled';
+            notificationItem['willDisable'] = false;
             if (appIsOpen == true) rebuild();
           }
           return;
         }
-            
+
         // date to schedule notification to now
         DateTime date = DateTime.fromMillisecondsSinceEpoch(notificationItem['date']);
         // date to schedule notification to next time
-        bool done = false;
         DateTime nextDate;
-        while (!done) {
-          nextDate = getNextDate(
-            date: date,
-            repeat: notificationItem['repeat'],
-            repeatEvery: notificationItem['repeatEvery'],
-            weekdays: List<bool>.from(notificationItem['weekdays']),
-          );
-          // if the app was installed after nextDate, get skip over this date and get the next nextDate. This is for when you reinstall the app and get your old notifications loaded (e.g via google backup).
-          if (installDate.millisecondsSinceEpoch < nextDate.millisecondsSinceEpoch) {
-            done = true;
-          }
-        }
+        nextDate = getNextDate(
+          date: date,
+          repeat: notificationItem['repeat'],
+          repeatEvery: notificationItem['repeatEvery'],
+          weekdays: List<bool>.from(notificationItem['weekdays']),
+        );
 
         // Only set date to nextDate if the notification has already fired. The date needs to be the closest future notification date. When notifications are scheduled for the first time, their date should therefore not be updated.
         if (notificationItem['date'] < DateTime.now().millisecondsSinceEpoch) {
@@ -238,6 +239,7 @@ class ListModel extends Model {
         }
       }
     });
+    _save();
   }
 
   _save() async {
