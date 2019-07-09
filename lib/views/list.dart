@@ -64,13 +64,12 @@ class ListPage extends StatelessWidget {
 class List extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print('[notifier] Building list ScopedModel');
     final themeModel = ScopedModel.of<ThemeModel>(context);
     return ScopedModel<ListModel>(
       model: listModel,
       child: ScopedModelDescendant<ListModel>(
         builder: (context, child, listModel) {
-          print('[notifier] Building list ScopedModelDescendant');
+          print('[notifier] Building list (ScopedModelDescendant)');
           return SliverList(
             delegate: SliverChildListDelegate(
               listModel.itemsAsList.map((item) {

@@ -3,10 +3,6 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 SharedPreferences prefs;
-// loadPrefs() async {
-//   prefs = await SharedPreferences.getInstance();
-//   print('prefs loaded');
-// }
 
 class ThemeModel extends Model {
   bool _darkMode = true;
@@ -50,7 +46,6 @@ class ThemeModel extends Model {
 
   static loadPrefs() async {
     prefs = await SharedPreferences.getInstance();
-    print('prefs loaded');
   }
 
   ThemeModel() {
@@ -66,7 +61,7 @@ class ThemeModel extends Model {
 
   void _setDarkMode({bool darkMode}) {
     _darkMode = darkMode;
-    print('[notifier] darkMode set to $darkMode');
+    print('[notifier] ThemeModel _setDarkMode() to $darkMode');
 
     color = darkMode ? grey : white;
     textColor = darkMode ? Colors.white : Colors.black;

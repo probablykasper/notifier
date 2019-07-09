@@ -97,12 +97,11 @@ class NotificationDialogState extends State<NotificationDialog> {
   Widget build(BuildContext context) {
     final themeModel = ScopedModel.of<ThemeModel>(context);
     bool titleHasChanged = false;
-    print('[notifier] Building dialog ScopedModel');
     return ScopedModel<NotificationDialogModel>(
       model: NotificationDialogModel(initialItem: initialItem),
       child: ScopedModelDescendant<NotificationDialogModel>(
         builder: (context, child, model) {
-          print('[notifier] Building dialog ScopedModelDescendant');
+          print('[notifier] Building dialog (ScopedModelDescendant)');
           bool noWeekdaySelected() =>
               model.item['repeat'] == 'weekly' && !model.item['weekdays'].contains(true);
           bool timeHasPassed() => model.item['date'] < DateTime.now().millisecondsSinceEpoch;
@@ -338,7 +337,7 @@ class NotificationDialogState extends State<NotificationDialog> {
                                   value: value,
                                   onChanged: (bool newValue) {
                                     model.item['weekdays'][index] = newValue;
-                                    print(model.item['weekdays']);
+                                    print('[notifier] Updated selected weekdays: '+model.item['weekdays'].toString());
                                     model.rebuild();
                                   },
                                 ),

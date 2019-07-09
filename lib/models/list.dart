@@ -11,7 +11,7 @@ import 'package:background_fetch/background_fetch.dart';
 
 // This "Headless Task" is run when app is terminated.
 void backgroundFetchHeadlessTask() async {
-  print('[BackgroundFetch] Headless event received.');
+  print('[notifier] BackgroundFetch: headless event received.');
   BackgroundFetch.finish();
 }
 
@@ -48,7 +48,7 @@ class ListModel extends Model {
   }
 
   checkForDisabledNotifications() async {
-    print('Starting checkForDisabledNotifications()');
+    print('[notifier] ListModel checkForDisabledNotifications()');
     Timer.periodic(
       Duration(milliseconds: 500),
       (timer) {
@@ -59,11 +59,13 @@ class ListModel extends Model {
               notificationItem['status'] = 'disabled';
               notificationItem['willDisable'] = false;
               changedWereMade = true;
+              print(
+                "[notifier] ListModel checkForDisabledNotifications(): Disabling $id ('${notificationItem['title']}') due to it having fired ",
+              );
             }
           }
         });
         if (changedWereMade) {
-          print('changedWereMade');
           _save();
           rebuild();
         }
@@ -72,7 +74,7 @@ class ListModel extends Model {
   }
 
   _load({bool checkForDisabledNotifications: false}) async {
-    print('[notifier] listModel _load()');
+    print('[notifier] ListModel _load()');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String notificationItems = prefs.getString('notificationItems') ?? '{}';
     _notificationItems = json.decode(notificationItems);
@@ -82,7 +84,6 @@ class ListModel extends Model {
     // BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
     configureBackgroundFetch();
 
-    print('[notifier] ListModel _load');
     notifyListeners();
     if (checkForDisabledNotifications) this.checkForDisabledNotifications();
     rebuild();
@@ -103,7 +104,7 @@ class ListModel extends Model {
           startOnBoot: true,
         ), () async {
       // This is the fetch-event callback.
-      print('[BackgroundFetch] Event received');
+      print('[notifier] BackgroundFetch: Event received');
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setInt('lastBackgroundFetchDate', DateTime.now().millisecondsSinceEpoch);
@@ -113,9 +114,9 @@ class ListModel extends Model {
       // for taking too long in the background.
       BackgroundFetch.finish();
     }).then((int status) {
-      print('[BackgroundFetch] SUCCESS: $status');
+      print('[notifier] BackgroundFetch: SUCCESS - Status: $status');
     }).catchError((e) {
-      print('[BackgroundFetch] ERROR: $e');
+      print('[notifier] BackgroundFetch: ERROR: $e');
     });
   }
 
@@ -127,7 +128,6 @@ class ListModel extends Model {
     if (repeat == 'daily') {
       newDay += repeatEvery;
     } else if (repeat == 'weekly') {
-      print('111');
 
       // get the zero-based weekday of date
       int dateWeekday = date.weekday - 1;
@@ -183,7 +183,7 @@ class ListModel extends Model {
   }
 
   setNotifications({@required bool appIsOpen}) async {
-    print('[notifier] _setNotifications');
+    print('[notifier] setNotifications()');
 
     var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'scheduled_notifications',
@@ -211,8 +211,7 @@ class ListModel extends Model {
       else
         return null;
     }).toList();
-    print('[notifier] ${pendingNotificationItemIds.length} items are currently scheduled:');
-    print('[notifier] $pendingNotificationItemIds');
+    print('[notifier] ListModel setNotifications(): ${pendingNotificationItemIds.length} items are currently scheduled: $pendingNotificationItemIds');
     _notificationItems.forEach((id, notificationItem) {
       int next48h = DateTime.now().add(Duration(hours: 48)).millisecondsSinceEpoch;
       if (!pendingNotificationItemIds.contains(notificationItem['id']) &&
@@ -257,7 +256,7 @@ class ListModel extends Model {
           platformChannelSpecifics,
         );
         print(
-            "[notifier] notification $id-$oneDigitFiredCount ('${notificationItem['title']}') has been scheduled for $date. Next date: $nextDate");
+            "[notifier] ListModel setNotifications(): notification $id-$oneDigitFiredCount ('${notificationItem['title']}') has been scheduled for $date. Next date: $nextDate");
 
         if (notificationItem['repeat'] == 'never') {
           notificationItem['willDisable'] = true;
@@ -269,9 +268,9 @@ class ListModel extends Model {
   }
 
   _save() async {
+    print('[notifier] ListModel _save()');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('notificationItems', json.encode(_notificationItems));
-    print('[notifier] ListModel _save');
   }
 
   Future<String> _generateId() async {
@@ -288,11 +287,12 @@ class ListModel extends Model {
     _notificationItems[id] = notificationItem;
     await _save();
     await setNotifications(appIsOpen: true);
-    print('[notifier] ListModel add');
+    print('[notifier] ListModel add()');
     notifyListeners();
   }
 
   delete(String id) async {
+    print('[notifier] ListModel delete()');
     _notificationItems.remove(id);
 
     List pastPendingNotifications =
@@ -301,14 +301,14 @@ class ListModel extends Model {
     List currentPendingNotifications =
         await flutterLocalNotificationsPlugin.pendingNotificationRequests();
     print(
-        '[notifier] Cancelled ${pastPendingNotifications.length - currentPendingNotifications.length} scheduled notifications');
+        '[notifier] ListModel delete(): Cancelled ${pastPendingNotifications.length - currentPendingNotifications.length} scheduled notifications');
 
     await _save();
-    print('[notifier] ListModel delete');
     notifyListeners();
   }
 
   update({String id, dynamic notificationItem}) async {
+    print('[notifier] ListModel update()');
     notificationItem['id'] = id;
     notificationItem['status'] = 'enabled';
     _notificationItems[id] = notificationItem;
@@ -319,12 +319,11 @@ class ListModel extends Model {
     List currentPendingNotifications =
         await flutterLocalNotificationsPlugin.pendingNotificationRequests();
     print(
-        '[notifier] Cancelled ${pastPendingNotifications.length - currentPendingNotifications.length} scheduled notifications');
+        '[notifier] ListModel update(): Cancelled ${pastPendingNotifications.length - currentPendingNotifications.length} scheduled notifications');
 
     await _save();
     await setNotifications(appIsOpen: true);
     rebuild();
-    print('[notifier] ListModel update');
     notifyListeners();
   }
 }
