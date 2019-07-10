@@ -314,6 +314,7 @@ class ListModel extends Model {
     print('[notifier] ListModel update()');
     notificationItem['id'] = id;
     notificationItem['status'] = 'enabled';
+    notificationItem['willDisable'] = false;
     _notificationItems[id] = notificationItem;
 
     List pastPendingNotifications =
