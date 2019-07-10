@@ -19,6 +19,7 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
 class ListModel extends Model {
   Map<String, dynamic> _notificationItems = {};
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 
   UnmodifiableMapView get items {
     print('[notifier] ListModel get items');
@@ -75,7 +76,7 @@ class ListModel extends Model {
 
   _load({bool checkForDisabledNotifications: false}) async {
     print('[notifier] ListModel _load()');
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await _prefs;
     String notificationItems = prefs.getString('notificationItems') ?? '{}';
     _notificationItems = json.decode(notificationItems);
 
@@ -106,7 +107,7 @@ class ListModel extends Model {
       // This is the fetch-event callback.
       print('[notifier] BackgroundFetch: Event received');
 
-      SharedPreferences prefs = await SharedPreferences.getInstance();
+      SharedPreferences prefs = await _prefs;
       await prefs.setInt('lastBackgroundFetchDate', DateTime.now().millisecondsSinceEpoch);
 
       await setNotifications(appIsOpen: false);
@@ -272,12 +273,12 @@ class ListModel extends Model {
 
   _save() async {
     print('[notifier] ListModel _save()');
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await _prefs;
     await prefs.setString('notificationItems', json.encode(_notificationItems));
   }
 
   Future<String> _generateId() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await _prefs;
     // notifications start at 1 because individual notification ids get extra digits added to the end
     int id = 1 + (prefs.getInt('lastId') ?? 0);
     await prefs.setInt('lastId', id);
