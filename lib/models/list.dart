@@ -49,21 +49,21 @@ class ListModel extends Model {
   }
 
   checkForDisabledNotifications() async {
+    // Since one-time notifications get disabled after firing, we check constantly to see if any one-time notifications have fired.
     print('[notifier] ListModel checkForDisabledNotifications()');
     Timer.periodic(
       Duration(milliseconds: 500),
       (timer) {
         bool changedWereMade = false;
         _notificationItems.forEach((id, notificationItem) {
-          if (notificationItem['willDisable'] == true) {
-            if (notificationItem['date'] < DateTime.now().millisecondsSinceEpoch) {
-              notificationItem['status'] = 'disabled';
-              notificationItem['willDisable'] = false;
-              changedWereMade = true;
-              print(
-                "[notifier] ListModel checkForDisabledNotifications(): Disabling $id ('${notificationItem['title']}') due to it having fired ",
-              );
-            }
+          if (notificationItem['willDisable'] == true &&
+              notificationItem['date'] < DateTime.now().millisecondsSinceEpoch) {
+            notificationItem['status'] = 'disabled';
+            notificationItem['willDisable'] = false;
+            changedWereMade = true;
+            print(
+              "[notifier] ListModel checkForDisabledNotifications(): Disabling $id ('${notificationItem['title']}') due to it having fired ",
+            );
           }
         });
         if (changedWereMade) {
@@ -215,20 +215,19 @@ class ListModel extends Model {
         '[notifier] ListModel setNotifications(): ${pendingNotificationItemIds.length} items are currently scheduled: $pendingNotificationItemIds');
     _notificationItems.forEach((id, notificationItem) {
       int next48h = DateTime.now().add(Duration(hours: 48)).millisecondsSinceEpoch;
+
+      // handle willDisable
+      if (notificationItem['repeat'] == 'never' && notificationItem['willDisable'] == true) {
+        // if the notification date is in the past, disable the notification
+        if (notificationItem['date'] < DateTime.now().millisecondsSinceEpoch) {
+          notificationItem['status'] = 'disabled';
+          notificationItem['willDisable'] = false;
+        }
+      }
+
       if (!pendingNotificationItemIds.contains(notificationItem['id']) &&
           notificationItem['date'] < next48h &&
           notificationItem['status'] == 'enabled') {
-        // if the notification willBeDisabled, don't schedule a new notification
-        if (notificationItem['repeat'] == 'never' && notificationItem['willDisable'] == true) {
-          // if the notification date is in the past, disable the notification
-          if (notificationItem['date'] < DateTime.now().millisecondsSinceEpoch) {
-            notificationItem['status'] = 'disabled';
-            notificationItem['willDisable'] = false;
-            if (appIsOpen == true) rebuild();
-          }
-          return;
-        }
-
         // date to schedule notification to now
         DateTime date = DateTime.fromMillisecondsSinceEpoch(notificationItem['date']);
         // date to schedule notification to next time
