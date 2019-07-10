@@ -97,65 +97,71 @@ class List extends StatelessWidget {
                       },
                     );
                   },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-                    child: Row(
-                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Switch(
-                          value: item['status'] == 'enabled',
-                          onChanged: (bool newValue) {
-                            if (newValue == true) {
-                              if (item['repeat'] == 'never' &&
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                        child: Row(
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Switch(
+                              value: item['status'] == 'enabled',
+                              onChanged: (bool newValue) {
+                                if (newValue == true) {
+                                  if (item['repeat'] == 'never' &&
                                       item['date'] < DateTime.now().millisecondsSinceEpoch) {
-                                return showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return NotificationDialog(
-                                      mode: 'edit',
-                                      // clone the item so it changes to it won't be saved
-                                      initialItem: Map<String, dynamic>.from(item),
-                                      listModel: listModel,
+                                    return showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return NotificationDialog(
+                                          mode: 'edit',
+                                          // clone the item so it changes to it won't be saved
+                                          initialItem: Map<String, dynamic>.from(item),
+                                          listModel: listModel,
+                                        );
+                                      },
                                     );
-                                  },
-                                );
-                              } else {
-                                item['status'] = 'enabled';
-                                listModel.setNotifications(appIsOpen: true);
-                              }
-                            } else {
-                              item['status'] = 'disabled';
-                              listModel.cancelNotificationIfExists(item['id']);
-                            }
-                            listModel.rebuild();
-                          },
-                        ),
-                        Container(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                item['title'],
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
+                                  } else {
+                                    item['status'] = 'enabled';
+                                    listModel.setNotifications(appIsOpen: true);
+                                  }
+                                } else {
+                                  item['status'] = 'disabled';
+                                  listModel.cancelNotificationIfExists(item['id']);
+                                }
+                                listModel.rebuild();
+                              },
+                            ),
+                            Container(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    item['title'],
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  Text(
+                                    item['description'],
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: themeModel.descriptionColor,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Text(
-                                item['description'],
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  
-                                  color: themeModel.descriptionColor,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      Divider(
+                        height: 1,
+                      ),
+                    ],
                   ),
                 );
               }).toList(),
