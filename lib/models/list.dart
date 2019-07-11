@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:core';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -34,9 +35,8 @@ class ListModel extends Model {
     return listOfItems;
   }
 
-  ListModel({bool checkForDisabledNotifications: false}) {
+  ListModel() {
     print('[notifier] ListModel constructor');
-    _load(checkForDisabledNotifications: checkForDisabledNotifications);
     // initialize notification plugin:
     flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
     var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
@@ -74,20 +74,44 @@ class ListModel extends Model {
     );
   }
 
-  _load({bool checkForDisabledNotifications: false}) async {
-    print('[notifier] ListModel _load()');
+  _loadPrefs() async {
     SharedPreferences prefs = await _prefs;
     String notificationItems = prefs.getString('notificationItems') ?? '{}';
     _notificationItems = json.decode(notificationItems);
+  }
+
+  load() async {
+    print('[notifier] ListModel _load()');
+
+    await _loadPrefs();
+    await checkIfRestored();
 
     // Register to receive BackgroundFetch events after app is terminated.
     // Requires {stopOnTerminate: false, enableHeadless: true}
     // BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
     configureBackgroundFetch();
 
-    notifyListeners();
-    if (checkForDisabledNotifications) this.checkForDisabledNotifications();
-    rebuild();
+    checkForDisabledNotifications();
+  }
+
+  Future<void> checkIfRestored() async {
+    // Disable all notifications if the last time BackgroundFetch ran was before the app was installed (e.g when the ap is restored from a backup).
+    // MSSE = Milliseconds Since Epoch
+    SharedPreferences prefs = await _prefs;
+    int lastBackgroundFecthDateMSSE = prefs.getInt('lastBackgroundFetchDate') ?? 0;
+
+    const platform = MethodChannel('space.kasper.notifier/get_install_date');
+    String installDateMSSE = await platform.invokeMethod('get_install_date');
+    if (int.parse(installDateMSSE) < lastBackgroundFecthDateMSSE) {
+      _disableAll();
+    }
+  }
+
+  _disableAll() {
+    _notificationItems.forEach((id, notificationItem) {
+      notificationItem['status'] = 'disabled';
+    });
+    _save();
   }
 
   rebuild() async {
@@ -171,13 +195,6 @@ class ListModel extends Model {
         String pendingId = notificationId.substring(0, notificationId.length - 1);
         if (id == pendingId) flutterLocalNotificationsPlugin.cancel(pendingNotification.id);
       }
-    });
-    _save();
-  }
-
-  disableAll() async {
-    _notificationItems.forEach((id, notificationItem) {
-      notificationItem['status'] = 'disabled';
     });
     _save();
   }

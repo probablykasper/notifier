@@ -8,9 +8,11 @@ import 'package:notifier/views/notification_dialog.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:notifier/models/list.dart';
 
-ListModel listModel = ListModel(checkForDisabledNotifications: true);
-
 class ListPage extends StatelessWidget {
+  final ListModel listModel;
+
+  ListPage({this.listModel});
+
   @override
   Widget build(BuildContext context) {
     final themeModel = ScopedModel.of<ThemeModel>(context);
@@ -55,7 +57,7 @@ class ListPage extends StatelessWidget {
               titlePadding: EdgeInsets.only(left: 72, bottom: 16),
             ),
           ),
-          List(),
+          List(listModel: listModel),
         ],
       ),
     );
@@ -63,6 +65,10 @@ class ListPage extends StatelessWidget {
 }
 
 class List extends StatelessWidget {
+  final ListModel listModel;
+
+  List({this.listModel});
+  
   @override
   Widget build(BuildContext context) {
     final themeModel = ScopedModel.of<ThemeModel>(context);

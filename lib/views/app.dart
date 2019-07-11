@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:notifier/models/list.dart';
 import 'package:notifier/models/theme_model.dart';
 import 'package:notifier/views/list.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class App extends StatelessWidget {
+  final ListModel listModel;
+
+  App({this.listModel});
+  
   @override
   Widget build(BuildContext context) {
     return ScopedModel<ThemeModel>(
@@ -21,7 +26,7 @@ class App extends StatelessWidget {
             title: 'Notifier',
             debugShowCheckedModeBanner: false,
             theme: themeModel.appTheme,
-            home: ListPage(),
+            home: ListPage(listModel: listModel),
           );
         },
       ),
