@@ -68,7 +68,7 @@ class List extends StatelessWidget {
   final ListModel listModel;
 
   List({this.listModel});
-  
+
   @override
   Widget build(BuildContext context) {
     final themeModel = ScopedModel.of<ThemeModel>(context);
@@ -110,6 +110,29 @@ class List extends StatelessWidget {
                         child: Row(
                           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
+                            Container(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    item['title'],
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  Text(
+                                    item['description'],
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: themeModel.descriptionColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                             Switch(
                               value: item['status'] == 'enabled',
                               onChanged: (bool newValue) {
@@ -137,29 +160,6 @@ class List extends StatelessWidget {
                                 }
                                 listModel.rebuild();
                               },
-                            ),
-                            Container(width: 8),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item['title'],
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Text(
-                                    item['description'],
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: themeModel.descriptionColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
                             ),
                           ],
                         ),
