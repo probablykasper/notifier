@@ -1,6 +1,5 @@
 <p align='center'>
   <img height='130' src='https://raw.githubusercontent.com/probablykasper/notifier/master/logo/logo.png'>
-</p>
 
   # Notifier
   A notification scheduling Android app with support for repeating notifications.
