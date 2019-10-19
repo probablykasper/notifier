@@ -1,5 +1,8 @@
-# Notifier
+<p align='center'>
+  <img height='130' src='https://kipp.6f.io/c25UDtr580J_.png'>
+</p>
 
+# Notifier
 A notification scheduling Android app with support for repeating notifications.
 
 ## Getting Started
