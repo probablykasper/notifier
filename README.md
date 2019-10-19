@@ -5,6 +5,14 @@
 # Notifier
 A notification scheduling Android app with support for repeating notifications.
 
+<p align='center'>
+  <img height='400' src='https://raw.githubusercontent.com/probablykasper/notifier/master/screenshots/1.jpg'>
+  <img height='400' src='https://raw.githubusercontent.com/probablykasper/notifier/master/screenshots/2.jpg'>
+  <img height='400' src='https://raw.githubusercontent.com/probablykasper/notifier/master/screenshots/3.jpg'>
+</p>
+
+</div>
+
 ## Getting Started
 
 All you really need is to [install Flutter](https://flutter.dev/docs/get-started/install). Just run `flutter run` to start debugging the app, like you would with any Flutter app.
