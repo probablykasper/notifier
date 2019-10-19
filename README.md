@@ -2,10 +2,9 @@
   <img height='130' src='https://raw.githubusercontent.com/probablykasper/notifier/master/logo/logo.png'>
 </p>
 
-# Notifier
-A notification scheduling Android app with support for repeating notifications.
+  # Notifier
+  A notification scheduling Android app with support for repeating notifications.
 
-<p align='center'>
   <img height='400' src='https://raw.githubusercontent.com/probablykasper/notifier/master/screenshots/1.jpg'>
   <img height='400' src='https://raw.githubusercontent.com/probablykasper/notifier/master/screenshots/2.jpg'>
   <img height='400' src='https://raw.githubusercontent.com/probablykasper/notifier/master/screenshots/3.jpg'>
