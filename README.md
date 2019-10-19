@@ -14,7 +14,11 @@ I used the `flutter_launcher_icons` package for that, so follow [these instructi
 
 ### Build
 
-Before releasing a Flutter Android app, make sure to follow [these steps](https://flutter.dev/docs/deployment/android).
+Follow [these steps](https://flutter.dev/docs/deployment/android).
 
-Generate Android apk: `flutter build apk`
-Generate Android app bundle: `flutter build appbundle`
+### Releasing a new version
+
+1. Specify a version and build number in `pubspec.yaml`, or use `--build-name` and `--build-number`
+2. Generate Android apk: `flutter build apk`
+3. Rename the output file to `notifier-x.y.z.apk`
+4. Commit with the message `x.y.z` and add a tag/release to it with the output file attached.
