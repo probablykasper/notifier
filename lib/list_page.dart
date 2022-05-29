@@ -13,9 +13,10 @@ import 'package:flutter/material.dart'
         Scaffold,
         StatelessWidget,
         Text,
-        ThemeData,
+        ThemeMode,
         Widget,
         showDialog;
+import 'package:notifier/main.dart';
 
 class Controller extends GetxController {
   var count = RxInt(0);
@@ -40,14 +41,7 @@ class ListPage extends StatelessWidget {
         floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.add),
             onPressed: () {
-              var title = Get.isDarkMode ? "Was dark" : "Wasn't dark";
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) => AlertDialog(
-                        title: Text(title),
-                      ));
-              Get.changeTheme(
-                  Get.isDarkMode ? ThemeData.light() : ThemeData.dark());
+              toggleDarkMode();
             }));
   }
 }
