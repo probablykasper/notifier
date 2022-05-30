@@ -5,11 +5,13 @@ import 'package:flutter/material.dart'
         ButtonThemeData,
         CardTheme,
         Color,
+        ColorScheme,
         Colors,
         DialogTheme,
         FloatingActionButtonThemeData,
         RoundedRectangleBorder,
         TextStyle,
+        TextTheme,
         ThemeData,
         ThemeMode;
 import 'package:get/get.dart' show Get, GetNavigation;
@@ -100,22 +102,34 @@ const blue = Color(0xFF00B0FF);
 ThemeData getTheme(bool darkMode) {
   var color = darkMode ? grey : white;
 
+  final ColorScheme colorSchema;
+  if (darkMode) {
+    colorSchema = const ColorScheme.dark();
+  } else {
+    colorSchema = const ColorScheme.light();
+  }
   return ThemeData(
     fontFamily: 'Jost',
     brightness: darkMode ? Brightness.dark : Brightness.light,
     scaffoldBackgroundColor: color.c1,
-    // textSelectionColor: Colors.white24,
-    // textSelectionHandleColor: blue,
-    // accentColor: Colors.white,
     toggleableActiveColor: blue,
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       foregroundColor: Colors.white,
       backgroundColor: darkMode ? color.c3 : blue,
     ),
-    // buttonColor: Colors.yellowAccent,
+    textTheme: TextTheme(
+      subtitle1: TextStyle(
+        fontFamily: 'Jost',
+        color: darkMode ? Colors.white : Colors.black,
+      ),
+    ),
     highlightColor:
         darkMode ? color.c6.withOpacity(0.3) : color.c6.withOpacity(0.2),
     splashColor: color.c6.withOpacity(0.3),
+    primaryColor: Colors.red,
+    colorScheme: colorSchema.copyWith(
+      secondary: Colors.blue,
+    ),
     buttonTheme: ButtonThemeData(
       minWidth: 85,
       height: 35,
@@ -138,6 +152,7 @@ ThemeData getTheme(bool darkMode) {
 }
 
 class CustomThemeData {
+  Color? textColor;
   Color? appBarBackgroundColor;
   Color? descriptionColor;
   Color? primaryButtonColor;
@@ -145,6 +160,7 @@ class CustomThemeData {
   TextStyle? appTitleStyle;
 
   CustomThemeData light() {
+    textColor = Colors.black;
     appBarBackgroundColor = blue;
     descriptionColor = white.c6;
     primaryButtonColor = blue;
@@ -153,6 +169,7 @@ class CustomThemeData {
   }
 
   CustomThemeData dark() {
+    textColor = Colors.white;
     appBarBackgroundColor = grey.c2;
     descriptionColor = grey.c6;
     primaryButtonColor = grey.c4;

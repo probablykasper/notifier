@@ -8,7 +8,9 @@ import 'package:flutter/material.dart'
         DropdownButton,
         DropdownMenuItem,
         EdgeInsets,
+        Icons,
         InputDecoration,
+        ListTile,
         MaterialButton,
         MaterialTapTargetSize,
         Row,
@@ -16,16 +18,20 @@ import 'package:flutter/material.dart'
         Text,
         TextFormField,
         Theme,
-        Widget;
-import 'package:notifier/notification_items.dart' show NotificationItem, Repeat;
-import 'package:notifier/theme.dart';
+        TimeOfDay,
+        Widget,
+        showDatePicker,
+        showTimePicker;
+import 'package:intl/intl.dart' show DateFormat;
+import 'package:notifier/notification_item.dart' show NotificationItem, Repeat;
+import 'package:notifier/theme.dart' show CustomTheme;
 
 class EditDialog extends StatefulWidget {
   final NotificationItem item;
   final bool editMode;
   final void Function(NotificationItem item) onSave;
 
-  EditDialog({
+  const EditDialog({
     required this.item,
     required this.editMode,
     required this.onSave,
@@ -39,6 +45,37 @@ class EditDialog extends StatefulWidget {
 
 class EditDialogState extends State<EditDialog> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+  Future<int?> _pickDateTime(BuildContext context, int date) async {
+    final firstDate = DateTime.now().subtract(const Duration(days: 1));
+    DateTime initialDateTime = DateTime.fromMillisecondsSinceEpoch(date);
+    if (initialDateTime.isBefore(firstDate)) {
+      initialDateTime = firstDate;
+    }
+
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: initialDateTime,
+      firstDate: firstDate,
+      lastDate: DateTime(3000),
+    );
+    if (pickedDate == null) return null;
+
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(initialDateTime),
+    );
+    if (pickedTime == null) return null;
+
+    final newDate = DateTime(
+      pickedDate.year,
+      pickedDate.month,
+      pickedDate.day,
+      pickedTime.hour,
+      pickedTime.minute,
+    );
+    return newDate.millisecondsSinceEpoch;
+  }
 
   @override
   Widget build(context) {
@@ -114,96 +151,84 @@ class EditDialogState extends State<EditDialog> {
                 //       }),
                 // ),
                 //* TIME
-                // ListTile(
-                //   contentPadding: EdgeInsets.symmetric(horizontal: 24),
-                //   leading: Icon(Icons.calendar_today),
-                //   title: Text('Time',
-                //       style: TextStyle(color: themeModel.textColor)),
-                //   isThreeLine: timeHasPassed(),
-                //   // subtitle: Text(
-                //   //   DateFormat("MMMM d, y 'at' h:mm a").format(
-                //   //     DateTime.fromMillisecondsSinceEpoch(model.item['date']),
-                //   //   ),
-                //   // ),
-                //   subtitle: RichText(
-                //     text: TextSpan(
-                //       children: [
-                //         TextSpan(
-                //           text: DateFormat("MMMM d, y 'at' h:mm a").format(
-                //             DateTime.fromMillisecondsSinceEpoch(
-                //                 model.item['date']),
-                //           ),
-                //           style: TextStyle(
-                //               color: themeModel.textColor, fontFamily: 'Jost'),
-                //         ),
-                //         TextSpan(
-                //           text: !timeHasPassed() ? '' : '\nTime has passed',
-                //           style: TextStyle(
-                //               color: themeModel.errorText, fontFamily: 'Jost'),
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                //   onTap: () async {
-                //     descriptionFocusNode.unfocus();
-                //     print('[notifier] Selecting date');
-                //     await _pickDateTime(context, model);
-                //     final notificationItemModel =
-                //         ScopedModel.of<NotificationDialogModel>(context);
-                //     notificationItemModel.rebuild();
-                //   },
-                // ),
+                ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                  leading: const Icon(Icons.calendar_today),
+                  title: const Text('Time'),
+                  isThreeLine: widget.item.timeHasPassed(),
+                  subtitle: RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: DateFormat("MMMM d, y 'at' h:mm a").format(
+                            DateTime.fromMillisecondsSinceEpoch(
+                                widget.item.date),
+                          ),
+                          style: TextStyle(
+                            color: Theme.of(context).custom.textColor,
+                            fontFamily: 'Jost',
+                          ),
+                        ),
+                        TextSpan(
+                          text: !widget.item.timeHasPassed()
+                              ? ''
+                              : '\nTime has passed',
+                          style: TextStyle(
+                            color: Colors.red.shade400,
+                            fontFamily: 'Jost',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  onTap: () async {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    var newDate =
+                        await _pickDateTime(context, widget.item.date);
+                    if (newDate != null) {
+                      setState(() {
+                        widget.item.date = newDate;
+                      });
+                    }
+                  },
+                ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Row(
                     children: <Widget>[
                       //* REPEAT
-                      FormField(
-                        initialValue: widget.item.repeat,
-                        onSaved: (newValue) {
-                          // model.item['repeat'] = newValue;
+                      DropdownButton<Repeat>(
+                        onChanged: (newValue) {
+                          if (newValue != null) {
+                            setState(() {
+                              widget.item.repeat = newValue;
+                            });
+                          }
                         },
-                        builder: (FormFieldState state) {
-                          return DropdownButton<Repeat>(
-                            onChanged: (newValue) {
-                              print(newValue);
-                              if (newValue != null) {
-                                setState(() {
-                                  widget.item.repeat = newValue;
-                                });
-                              }
-                            },
-                            value: widget.item.repeat,
-                            elevation: 16,
-                            // style: TextStyle(
-                            //   fontFamily: 'Jost',
-                            //   color: themeModel.textColor,
-                            //   fontSize: 15,
-                            // ),
-                            items: const [
-                              DropdownMenuItem(
-                                value: Repeat.never,
-                                child: Text("Doesn't Repeat"),
-                              ),
-                              DropdownMenuItem(
-                                value: Repeat.daily,
-                                child: Text("Repeat Daily"),
-                              ),
-                              DropdownMenuItem(
-                                value: Repeat.weekly,
-                                child: Text("Repeat Weekly"),
-                              ),
-                              DropdownMenuItem(
-                                value: Repeat.monthly,
-                                child: Text("Repeat Monthly"),
-                              ),
-                              DropdownMenuItem(
-                                value: Repeat.yearly,
-                                child: Text("Repeat Yearly"),
-                              ),
-                            ],
-                          );
-                        },
+                        value: widget.item.repeat,
+                        elevation: 16,
+                        items: const [
+                          DropdownMenuItem(
+                            value: Repeat.never,
+                            child: Text("Doesn't Repeat"),
+                          ),
+                          DropdownMenuItem(
+                            value: Repeat.daily,
+                            child: Text("Repeat Daily"),
+                          ),
+                          DropdownMenuItem(
+                            value: Repeat.weekly,
+                            child: Text("Repeat Weekly"),
+                          ),
+                          DropdownMenuItem(
+                            value: Repeat.monthly,
+                            child: Text("Repeat Monthly"),
+                          ),
+                          DropdownMenuItem(
+                            value: Repeat.yearly,
+                            child: Text("Repeat Yearly"),
+                          ),
+                        ],
                       ),
                       Container(width: 6),
                       // (() {
@@ -353,7 +378,12 @@ class EditDialogState extends State<EditDialog> {
                   disabledColor:
                       Theme.of(context).custom.primaryButtonDisabledColor,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  child: const Text('Save'),
+                  child: const Text(
+                    'Save',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ],
             ),

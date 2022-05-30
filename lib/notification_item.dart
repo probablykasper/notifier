@@ -18,6 +18,7 @@ class NotificationItem {
   String description;
   bool disabled;
   Repeat repeat;
+  int date;
   // bool noSwipeAway;
   // int date;
   // int firedCount;
@@ -27,19 +28,38 @@ class NotificationItem {
     required this.description,
     required this.disabled,
     required this.repeat,
+    required this.date,
   });
+  factory NotificationItem.getDefault() {
+    var now = DateTime.now();
+    return NotificationItem(
+      title: '',
+      description: '',
+      disabled: false,
+      repeat: Repeat.never,
+      date: DateTime(now.year, now.month, now.day, now.hour + 2)
+          .millisecondsSinceEpoch,
+    );
+  }
 
-  NotificationItem.fromJson(Map<String, dynamic> json)
-      : title = json['title'],
-        description = json['description'],
-        disabled = json['disabled'],
-        repeat = json['repeat'];
+  bool timeHasPassed() => date < DateTime.now().millisecondsSinceEpoch;
+
+  factory NotificationItem.fromJson(Map<String, dynamic> json) {
+    return NotificationItem(
+      title: json['title'],
+      description: json['description'],
+      disabled: json['disabled'],
+      repeat: json['repeat'],
+      date: json['date'],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         'title': title,
         'description': description,
         'disabled': disabled,
         'repeat': repeat,
+        'date': date,
       };
 }
 

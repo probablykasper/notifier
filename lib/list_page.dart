@@ -30,7 +30,7 @@ import 'package:flutter/material.dart'
         Widget;
 import 'package:get/state_manager.dart';
 import 'package:notifier/edit_dialog.dart';
-import 'notification_items.dart' show NotificationItem, Repeat;
+import 'notification_item.dart' show NotificationItem;
 import 'theme.dart' show CustomTheme, toggleDarkMode;
 
 class Controller extends GetxController {
@@ -48,12 +48,7 @@ class ListPage extends StatelessWidget {
             child: const Icon(Icons.add),
             onPressed: () {
               Get.dialog(EditDialog(
-                item: NotificationItem(
-                  title: '',
-                  description: '',
-                  disabled: false,
-                  repeat: Repeat.never,
-                ),
+                item: NotificationItem.getDefault(),
                 editMode: false,
                 onSave: (item) {
                   c.items.add(item);
