@@ -12,7 +12,6 @@ import 'package:flutter/material.dart'
         TextStyle,
         ThemeData,
         ThemeMode;
-import 'package:flutter/scheduler.dart' show SchedulerBinding;
 import 'package:get/get.dart' show Get, GetNavigation;
 import 'main.dart' show prefsFuture;
 
@@ -141,11 +140,14 @@ ThemeData getTheme(bool darkMode) {
 class CustomThemeData {
   Color? appBarBackgroundColor;
   Color? descriptionColor;
+  Color? primaryButtonColor;
+  Color? primaryButtonDisabledColor = white.c4.withOpacity(0.5);
   TextStyle? appTitleStyle;
 
   CustomThemeData light() {
     appBarBackgroundColor = blue;
     descriptionColor = white.c6;
+    primaryButtonColor = blue;
     appTitleStyle = const TextStyle(color: Colors.white);
     return this;
   }
@@ -153,6 +155,7 @@ class CustomThemeData {
   CustomThemeData dark() {
     appBarBackgroundColor = grey.c2;
     descriptionColor = grey.c6;
+    primaryButtonColor = grey.c4;
     appTitleStyle = const TextStyle(color: blue);
     return this;
   }

@@ -1,18 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart'
-    show
-        ExtensionDialog,
-        Get,
-        GetNavigation,
-        GetxController,
-        Inst,
-        Obx,
-        RxInt,
-        StringExtension;
+    show ExtensionDialog, Get, GetxController, Inst, Obx;
 import 'package:flutter/material.dart'
     show
-        AppBar,
-        Center,
         Colors,
         Column,
         Container,
@@ -20,7 +10,6 @@ import 'package:flutter/material.dart'
         CustomScrollView,
         Divider,
         EdgeInsets,
-        ElevatedButton,
         Expanded,
         FlexibleSpaceBar,
         FloatingActionButton,
@@ -32,7 +21,6 @@ import 'package:flutter/material.dart'
         Row,
         Scaffold,
         SliverAppBar,
-        SliverChildListDelegate,
         SliverList,
         StatelessWidget,
         Switch,
@@ -41,6 +29,7 @@ import 'package:flutter/material.dart'
         Theme,
         Widget;
 import 'package:get/state_manager.dart';
+import 'package:notifier/edit_dialog.dart';
 import 'notification_items.dart' show NotificationItem, Repeat;
 import 'theme.dart' show CustomTheme, toggleDarkMode;
 
@@ -58,12 +47,18 @@ class ListPage extends StatelessWidget {
         floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.add),
             onPressed: () {
-              print("Add notification item");
-              c.items.add(NotificationItem(
-                title: 'Yo',
-                description: 'Ddd',
+              Get.dialog(EditDialog(
+                item: NotificationItem(
+                  title: '',
+                  description: '',
+                  disabled: false,
+                  repeat: Repeat.never,
+                ),
+                editMode: false,
+                onSave: (item) {
+                  c.items.add(item);
+                },
               ));
-              c.refresh();
             }),
         body: CustomScrollView(
           slivers: <Widget>[
@@ -73,7 +68,6 @@ class ListPage extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.wb_sunny),
                   onPressed: () {
-                    print("Toggle dark mode");
                     toggleDarkMode();
                   },
                   color: Colors.white,
@@ -118,23 +112,19 @@ class ListView extends StatelessWidget {
               //       '[notifier] Running setNotifications() before opening edit dialog');
               //   await listModel.setNotifications(appIsOpen: true);
               // }
-              print("[notifier] Opening edit dialog");
-              // return showDialog(
-              //   context: context,
-              //   builder: (BuildContext context) {
-              //     return NotificationDialog(
-              //       mode: 'edit',
-              //       // clone the item so it changes to it won't be saved
-              //       initialItem: Map<String, dynamic>.from(item),
-              //       listModel: listModel,
-              //     );
-              //   },
-              // );
+              Get.dialog(EditDialog(
+                item: NotificationItem.fromJson(c.items[index].toJson()),
+                editMode: true,
+                onSave: (item) {
+                  c.items[index] = item;
+                },
+              ));
             },
             child: Column(
               children: <Widget>[
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
                   child: Row(
                     children: <Widget>[
                       Container(width: 8),
@@ -151,10 +141,11 @@ class ListView extends StatelessWidget {
                             ),
                             Text(
                               c.items[index].description,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
-                                // color: themeModel.descriptionColor,
+                                color:
+                                    Theme.of(context).custom.descriptionColor,
                               ),
                             ),
                           ],

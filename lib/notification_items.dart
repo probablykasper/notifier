@@ -23,10 +23,10 @@ class NotificationItem {
   // int firedCount;
 
   NotificationItem({
-    this.title = '',
-    this.description = '',
-    this.disabled = false,
-    this.repeat = Repeat.never,
+    required this.title,
+    required this.description,
+    required this.disabled,
+    required this.repeat,
   });
 
   NotificationItem.fromJson(Map<String, dynamic> json)
