@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   shared_preferences: ^2.0.15
   get: ^4.6.5
+  awesome_notifications: ^0.6.21
 
 dev_dependencies:
   flutter_test:
