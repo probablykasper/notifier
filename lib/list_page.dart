@@ -30,6 +30,7 @@ import 'package:flutter/material.dart'
         Widget;
 import 'package:get/state_manager.dart';
 import 'package:notifier/edit_dialog.dart';
+import 'package:notifier/scheduler.dart';
 import 'notification_item.dart' show NotificationItem;
 import 'theme.dart' show CustomTheme, toggleDarkMode;
 
@@ -52,6 +53,7 @@ class ListPage extends StatelessWidget {
                 editMode: false,
                 onSave: (item) {
                   c.items.add(item);
+                  scheduleNotifications();
                 },
               ));
             }),
@@ -112,6 +114,7 @@ class ListView extends StatelessWidget {
                 editMode: true,
                 onSave: (item) {
                   c.items[index] = item;
+                  scheduleNotifications();
                 },
               ));
             },

@@ -1,12 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.notifier">
 
-    <!-- For android_alarm_manager_plus -->
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <!-- For android_alarm_manager_plus -->
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <!-- For android_alarm_manager_plus -->
+    <!-- Start Alarm Manager -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <!-- End Alarm Manager -->
 
    <application
         android:label="notifier"
@@ -39,16 +38,14 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
-        <!-- For android_alarm_manager_plus -->
+        <!-- Start Alarm Manager -->
         <service
             android:name="dev.fluttercommunity.plus.androidalarmmanager.AlarmService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            android:exported="false"/>
-        <!-- For android_alarm_manager_plus -->
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
         <receiver
             android:name="dev.fluttercommunity.plus.androidalarmmanager.AlarmBroadcastReceiver"
-            android:exported="false"/>
-        <!-- For android_alarm_manager_plus -->
+            android:exported="false" />
         <receiver
             android:name="dev.fluttercommunity.plus.androidalarmmanager.RebootBroadcastReceiver"
             android:enabled="false"
@@ -57,6 +54,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+        <!-- End Alarm Manager -->
 
     </application>
 </manifest>
