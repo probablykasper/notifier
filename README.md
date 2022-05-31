@@ -19,6 +19,9 @@ A notification scheduling Android app with support for repeating notifications.
 
 ## Getting Started
 
+1. Install Flutter
+2. Run `flutter pub get`
+
 All you really need is to [install Flutter](https://flutter.dev/docs/get-started/install). Just run `flutter run` to start debugging the app, like you would with any Flutter app.
 
 The app is built using the [scoped_model](https://pub.dev/packages/scoped_model) package, which is worth knowing about. Other than that, it pretty much works like any basic Flutter app, so there's not much else that needs to be said.

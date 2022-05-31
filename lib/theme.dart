@@ -102,12 +102,12 @@ const blue = Color(0xFF00B0FF);
 ThemeData getTheme(bool darkMode) {
   var color = darkMode ? grey : white;
 
-  final ColorScheme colorSchema;
-  if (darkMode) {
-    colorSchema = const ColorScheme.dark();
-  } else {
-    colorSchema = const ColorScheme.light();
-  }
+  // final ColorScheme colorSchema;
+  // if (darkMode) {
+  //   colorSchema = const ColorScheme.dark();
+  // } else {
+  //   colorSchema = const ColorScheme.light();
+  // }
   return ThemeData(
     fontFamily: 'Jost',
     brightness: darkMode ? Brightness.dark : Brightness.light,
@@ -126,10 +126,10 @@ ThemeData getTheme(bool darkMode) {
     highlightColor:
         darkMode ? color.c6.withOpacity(0.3) : color.c6.withOpacity(0.2),
     splashColor: color.c6.withOpacity(0.3),
-    primaryColor: Colors.red,
-    colorScheme: colorSchema.copyWith(
-      secondary: Colors.blue,
-    ),
+    primaryColor: Colors.white,
+    // colorScheme: colorSchema.copyWith(
+    //   secondary: Colors.blue,
+    // ),
     buttonTheme: ButtonThemeData(
       minWidth: 85,
       height: 35,

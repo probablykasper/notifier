@@ -10,7 +10,7 @@
    <application
         android:label="notifier"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -46,10 +46,11 @@
         <receiver
             android:name="dev.fluttercommunity.plus.androidalarmmanager.AlarmBroadcastReceiver"
             android:exported="false" />
+        <!-- android:exported switched to true for awesome_notifications -->
         <receiver
             android:name="dev.fluttercommunity.plus.androidalarmmanager.RebootBroadcastReceiver"
             android:enabled="false"
-            android:exported="false">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
