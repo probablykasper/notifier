@@ -1,22 +1,38 @@
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' show Get, GetNavigation;
 import 'package:flutter/material.dart'
     show
+        AutovalidateMode,
+        BuildContext,
         Colors,
         Column,
         Container,
+        CrossAxisAlignment,
         DropdownButton,
         DropdownMenuItem,
         EdgeInsets,
+        FocusManager,
+        Form,
+        FormState,
+        GlobalKey,
+        Icon,
         Icons,
         InputDecoration,
         ListTile,
+        MainAxisAlignment,
         MaterialButton,
         MaterialTapTargetSize,
+        Padding,
+        RichText,
         Row,
         SimpleDialog,
+        State,
+        StatefulWidget,
         Text,
         TextFormField,
+        TextInputAction,
+        TextInputType,
+        TextSpan,
+        TextStyle,
         Theme,
         TimeOfDay,
         Widget,
@@ -46,16 +62,16 @@ class EditDialog extends StatefulWidget {
 class EditDialogState extends State<EditDialog> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
-  Future<int?> _pickDateTime(BuildContext context, int date) async {
+  Future<DateTime?> pickDateTime(
+      BuildContext context, DateTime initialDT) async {
     final firstDate = DateTime.now().subtract(const Duration(days: 1));
-    DateTime initialDateTime = DateTime.fromMillisecondsSinceEpoch(date);
-    if (initialDateTime.isBefore(firstDate)) {
-      initialDateTime = firstDate;
+    if (initialDT.isBefore(firstDate)) {
+      initialDT = firstDate;
     }
 
     final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: initialDateTime,
+      initialDate: initialDT,
       firstDate: firstDate,
       lastDate: DateTime(3000),
     );
@@ -63,7 +79,7 @@ class EditDialogState extends State<EditDialog> {
 
     final TimeOfDay? pickedTime = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(initialDateTime),
+      initialTime: TimeOfDay.fromDateTime(initialDT),
     );
     if (pickedTime == null) return null;
 
@@ -74,7 +90,7 @@ class EditDialogState extends State<EditDialog> {
       pickedTime.hour,
       pickedTime.minute,
     );
-    return newDate.millisecondsSinceEpoch;
+    return newDate;
   }
 
   @override
@@ -160,10 +176,8 @@ class EditDialogState extends State<EditDialog> {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: DateFormat("MMMM d, y 'at' h:mm a").format(
-                            DateTime.fromMillisecondsSinceEpoch(
-                                widget.item.date),
-                          ),
+                          text: DateFormat("MMMM d, y 'at' h:mm a")
+                              .format(widget.item.getLatestDate()),
                           style: TextStyle(
                             color: Theme.of(context).custom.textColor,
                             fontFamily: 'Jost',
@@ -183,11 +197,11 @@ class EditDialogState extends State<EditDialog> {
                   ),
                   onTap: () async {
                     FocusManager.instance.primaryFocus?.unfocus();
-                    var newDate =
-                        await _pickDateTime(context, widget.item.date);
+                    var newDate = await pickDateTime(
+                        context, widget.item.getLatestDate());
                     if (newDate != null) {
                       setState(() {
-                        widget.item.date = newDate;
+                        widget.item.originalDate = newDate;
                       });
                     }
                   },
@@ -362,11 +376,7 @@ class EditDialogState extends State<EditDialog> {
                 MaterialButton(
                   splashColor: Colors.transparent,
                   elevation: 0,
-                  // textColor: !themeModel.darkMode && !saveDisabled()
-                  //     ? Colors.white
-                  //     : null,
                   onPressed: () {
-                    //   titleHasChanged = true;
                     if (formKey.currentState != null &&
                         formKey.currentState!.validate()) {
                       formKey.currentState!.save();

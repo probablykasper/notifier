@@ -38,7 +38,11 @@ dependencies:
   get: ^4.6.5
   awesome_notifications: ^0.6.21
   intl: ^0.17.0
-  android_alarm_manager_plus: ^2.0.5
+  android_alarm_manager_plus:
+    git:
+      url: https://github.com/fluttercommunity/plus_plugins.git
+      ref: refs/pull/810/head
+      path: packages/android_alarm_manager_plus
 
 dev_dependencies:
   flutter_test:

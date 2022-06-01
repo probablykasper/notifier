@@ -2,9 +2,9 @@
     package="com.example.notifier">
 
     <!-- Start Alarm Manager -->
-    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <!-- End Alarm Manager -->
 
    <application
