@@ -1,3 +1,5 @@
+import 'package:flutter/services.dart'
+    show FilteringTextInputFormatter, LengthLimitingTextInputFormatter;
 import 'package:get/get.dart' show Get, GetNavigation;
 import 'package:flutter/material.dart'
     show
@@ -25,9 +27,13 @@ import 'package:flutter/material.dart'
         RichText,
         Row,
         SimpleDialog,
+        SizedBox,
         State,
         StatefulWidget,
         Text,
+        TextAlign,
+        TextEditingController,
+        TextField,
         TextFormField,
         TextInputAction,
         TextInputType,
@@ -36,6 +42,7 @@ import 'package:flutter/material.dart'
         Theme,
         TimeOfDay,
         Widget,
+        kMinInteractiveDimension,
         showDatePicker,
         showTimePicker;
 import 'package:intl/intl.dart' show DateFormat;
@@ -46,8 +53,11 @@ class EditDialog extends StatefulWidget {
   final NotificationItem item;
   final bool editMode;
   final void Function(NotificationItem item) onSave;
+  var repeatEveryController = TextEditingController(
+    text: "1",
+  );
 
-  const EditDialog({
+  EditDialog({
     required this.item,
     required this.editMode,
     required this.onSave,
@@ -208,10 +218,12 @@ class EditDialogState extends State<EditDialog> {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
+                  height: kMinInteractiveDimension,
                   child: Row(
                     children: <Widget>[
                       //* REPEAT
                       DropdownButton<String>(
+                        itemHeight: kMinInteractiveDimension,
                         onChanged: (newValue) {
                           if (newValue != null) {
                             setState(() {
@@ -244,65 +256,74 @@ class EditDialogState extends State<EditDialog> {
                           ),
                         ],
                       ),
-                      Container(width: 6),
-                      // (() {
-                      //   if (model.item['repeat'] == 'never') {
-                      //     return Container();
-                      //   } else {
-                      //     return Text('every', style: TextStyle(fontSize: 15));
-                      //   }
-                      // })(),
+                      const SizedBox(width: 6),
+                      Text(
+                        widget.item.repeat == Repeat.never ? '' : 'every',
+                        style: const TextStyle(fontSize: 15),
+                      ),
                       //* REPEAT EVERY
-                      Container(width: 6),
-                      // (() {
-                      //   if (model.item['repeat'] == 'never') {
-                      //     return Container();
-                      //   } else {
-                      //     return Container(
-                      //       width: 35,
-                      //       child: TextFormField(
-                      //         initialValue:
-                      //             model.item['repeatEvery'].toString(),
-                      //         onSaved: (String newValue) {
-                      //           if (newValue == '')
-                      //             model.item['repeatEvery'] = 1;
-                      //           else
-                      //             model.item['repeatEvery'] =
-                      //                 int.parse(newValue);
-                      //         },
-                      //         textAlign: TextAlign.center,
-                      //         keyboardType: TextInputType.numberWithOptions(
-                      //           signed: false,
-                      //           decimal: false,
-                      //         ),
-                      //         inputFormatters: [
-                      //           BlacklistingTextInputFormatter(RegExp('^0\$')),
-                      //           WhitelistingTextInputFormatter.digitsOnly,
-                      //           LengthLimitingTextInputFormatter(3),
-                      //         ],
-                      //         decoration: InputDecoration(
-                      //           hintText: '1',
-                      //           contentPadding:
-                      //               EdgeInsets.symmetric(vertical: 4),
-                      //         ),
-                      //       ),
-                      //     );
-                      //   }
-                      // })(),
-                      Container(width: 6),
-                      // (() {
-                      //   if (model.item['repeat'] == 'daily') {
-                      //     return Text('days', style: TextStyle(fontSize: 15));
-                      //   } else if (model.item['repeat'] == 'weekly') {
-                      //     return Text('weeks', style: TextStyle(fontSize: 15));
-                      //   } else if (model.item['repeat'] == 'monthly') {
-                      //     return Text('months', style: TextStyle(fontSize: 15));
-                      //   } else if (model.item['repeat'] == 'yearly') {
-                      //     return Text('years', style: TextStyle(fontSize: 15));
-                      //   } else {
-                      //     return Container();
-                      //   }
-                      // })(),
+                      const SizedBox(width: 6),
+                      (() {
+                        if (widget.item.repeat == Repeat.never) {
+                          return const SizedBox();
+                        } else {
+                          const removedTopPadding = 16.0;
+                          return SizedBox(
+                            width: 35,
+                            height:
+                                kMinInteractiveDimension - removedTopPadding,
+                            child: TextField(
+                              controller: widget.repeatEveryController,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  if (newValue == '') {
+                                    widget.item.repeatEvery = 1;
+                                  } else {
+                                    widget.item.repeatEvery =
+                                        int.parse(newValue);
+                                  }
+                                });
+                              },
+                              textAlign: TextAlign.center,
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                signed: false,
+                                decimal: false,
+                              ),
+                              inputFormatters: [
+                                FilteringTextInputFormatter.deny(
+                                    RegExp('^0\$')),
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(3),
+                              ],
+                              decoration: const InputDecoration(
+                                isDense: false,
+                                hintText: '1',
+                                contentPadding:
+                                    EdgeInsets.only(top: -removedTopPadding),
+                              ),
+                            ),
+                          );
+                        }
+                      })(),
+                      const SizedBox(width: 6),
+                      Text(
+                        (() {
+                          switch (widget.item.repeat) {
+                            case Repeat.daily:
+                              return 'days';
+                            case Repeat.weekly:
+                              return 'weeks';
+                            case Repeat.monthly:
+                              return 'months';
+                            case Repeat.yearly:
+                              return 'years';
+                            default:
+                              return '';
+                          }
+                        })(),
+                        style: const TextStyle(fontSize: 15),
+                      ),
                     ],
                   ),
                 ),
@@ -329,7 +350,7 @@ class EditDialogState extends State<EditDialog> {
                 //       });
                 //       return Wrap(children: checkboxes);
                 //     } else {
-                //       return Container();
+                //       return const SizedBox();
                 //     }
                 //   })(),
                 // )
@@ -371,7 +392,7 @@ class EditDialogState extends State<EditDialog> {
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   child: const Text('Cancel'),
                 ),
-                Container(width: 12),
+                const SizedBox(width: 12),
                 //* SAVE
                 MaterialButton(
                   splashColor: Colors.transparent,

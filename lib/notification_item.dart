@@ -19,6 +19,7 @@ class NotificationItem {
   String description;
   bool disabled;
   String repeat;
+  int repeatEvery;
   DateTime originalDate;
   DateTime? lastScheduledDate;
 
@@ -31,6 +32,7 @@ class NotificationItem {
     required this.description,
     required this.disabled,
     required this.repeat,
+    required this.repeatEvery,
     required this.originalDate,
     required this.lastScheduledDate,
   });
@@ -41,6 +43,7 @@ class NotificationItem {
       description: '',
       disabled: false,
       repeat: Repeat.never,
+      repeatEvery: 1,
       originalDate: DateTime(now.year, now.month, now.day, now.hour + 2),
       lastScheduledDate: null,
     );
@@ -62,6 +65,7 @@ class NotificationItem {
       description: map['description'],
       disabled: map['disabled'],
       repeat: map['repeat'],
+      repeatEvery: map['repeatEvery'],
       originalDate: DateTime.fromMillisecondsSinceEpoch(map['originalDate']),
       lastScheduledDate: map['lastDate'] == null
           ? null
@@ -75,6 +79,7 @@ class NotificationItem {
       'description': description,
       'disabled': disabled,
       'repeat': repeat,
+      'repeatEvery': repeatEvery,
       'originalDate': originalDate.millisecondsSinceEpoch,
       'lastDate': lastScheduledDate?.millisecondsSinceEpoch,
     };
@@ -93,7 +98,7 @@ class NotificationItem {
       return DateTime(
           fromDate.year,
           fromDate.month,
-          fromDate.day + 1,
+          fromDate.day + repeatEvery,
           originalDate.hour,
           originalDate.minute,
           originalDate.second,
@@ -102,7 +107,7 @@ class NotificationItem {
       return DateTime(
           fromDate.year,
           fromDate.month,
-          fromDate.day + 7,
+          fromDate.day + 7 * repeatEvery,
           originalDate.hour,
           originalDate.minute,
           originalDate.second,
@@ -110,7 +115,7 @@ class NotificationItem {
     } else if (repeat == Repeat.monthly) {
       return DateTime(
           fromDate.year,
-          fromDate.month + 1,
+          fromDate.month + repeatEvery,
           originalDate.day,
           originalDate.hour,
           originalDate.minute,
@@ -118,7 +123,7 @@ class NotificationItem {
           originalDate.millisecond);
     } else if (repeat == Repeat.yearly) {
       return DateTime(
-          fromDate.year,
+          fromDate.year + repeatEvery,
           originalDate.month,
           originalDate.day,
           originalDate.hour,
