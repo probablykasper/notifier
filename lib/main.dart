@@ -1,7 +1,6 @@
 import 'package:awesome_notifications/awesome_notifications.dart'
     show AwesomeNotifications, NotificationChannel;
-import 'package:flutter/material.dart'
-    show Colors, ThemeData, ThemeMode, runApp;
+import 'package:flutter/material.dart' show Colors, ThemeMode, runApp;
 import 'package:notifier/scheduler.dart' show scheduleNotifications;
 import 'theme.dart' show getTheme, initializeTheme;
 import 'list_page.dart' show ListPage;

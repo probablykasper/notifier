@@ -28,7 +28,6 @@ void handler() async {
   var items = jsonItems.map((jsonItem) {
     return NotificationItem.fromJson(jsonItem);
   }).toList();
-  print("ITEMS $jsonItems");
   for (var i = 0; i < items.length; i++) {
     var nextDate = items[i].getNextNotificationDate();
     if (nextDate != null) {

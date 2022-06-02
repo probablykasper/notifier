@@ -20,12 +20,10 @@ class NotificationItem {
   bool disabled;
   String repeat;
   int repeatEvery;
+  List<bool> weekdays;
   DateTime originalDate;
   DateTime? lastScheduledDate;
-
   // bool noSwipeAway;
-  // int date;
-  // int firedCount;
 
   NotificationItem({
     required this.title,
@@ -33,6 +31,7 @@ class NotificationItem {
     required this.disabled,
     required this.repeat,
     required this.repeatEvery,
+    required this.weekdays,
     required this.originalDate,
     required this.lastScheduledDate,
   });
@@ -44,6 +43,7 @@ class NotificationItem {
       disabled: false,
       repeat: Repeat.never,
       repeatEvery: 1,
+      weekdays: [false, false, false, false, false, false, false],
       originalDate: DateTime(now.year, now.month, now.day, now.hour + 2),
       lastScheduledDate: null,
     );
@@ -66,6 +66,7 @@ class NotificationItem {
       disabled: map['disabled'],
       repeat: map['repeat'],
       repeatEvery: map['repeatEvery'],
+      weekdays: map['weekdays'],
       originalDate: DateTime.fromMillisecondsSinceEpoch(map['originalDate']),
       lastScheduledDate: map['lastDate'] == null
           ? null
@@ -80,6 +81,7 @@ class NotificationItem {
       'disabled': disabled,
       'repeat': repeat,
       'repeatEvery': repeatEvery,
+      'weekdays': weekdays,
       'originalDate': originalDate.millisecondsSinceEpoch,
       'lastDate': lastScheduledDate?.millisecondsSinceEpoch,
     };
@@ -104,14 +106,42 @@ class NotificationItem {
           originalDate.second,
           originalDate.millisecond);
     } else if (repeat == Repeat.weekly) {
+      var newDay = fromDate.day;
+      final fromZeroBasedWeekday = fromDate.weekday - 1;
+
+      // find the next checked weekday in the "current" week
+      final nextCheckedWeekday =
+          weekdays.indexOf(true, fromZeroBasedWeekday + 1);
+
+      if (nextCheckedWeekday >= 0) {
+        newDay += nextCheckedWeekday - fromZeroBasedWeekday;
+      } else {
+        // if the next date is not in this week
+
+        // go back to monday
+        newDay -= fromZeroBasedWeekday;
+        // go to next week
+        newDay += 7 * repeatEvery;
+
+        // go to first checked weekday
+        final firstCheckedWeekday = weekdays.indexOf(true);
+        if (firstCheckedWeekday >= 0) {
+          newDay += firstCheckedWeekday;
+        } else {
+          // if no weekday is checked, go to the originalDate weekday
+          newDay += originalDate.weekday - 1;
+        }
+      }
+
       return DateTime(
-          fromDate.year,
-          fromDate.month,
-          fromDate.day + 7 * repeatEvery,
-          originalDate.hour,
-          originalDate.minute,
-          originalDate.second,
-          originalDate.millisecond);
+        fromDate.year,
+        fromDate.month,
+        newDay,
+        originalDate.hour,
+        originalDate.minute,
+        originalDate.second,
+        originalDate.millisecond,
+      );
     } else if (repeat == Repeat.monthly) {
       return DateTime(
           fromDate.year,
@@ -147,7 +177,6 @@ class NotificationItem {
     // but not into the future because then we could be
     var now = DateTime.now();
     var nextDate = directlyNextDate;
-    print("getNextNotificationDate");
     while (nextDate.isBefore(now)) {
       var nextNextDate = _getDirectlyNextDate(nextDate);
       if (nextNextDate != null && nextNextDate.isBefore(now)) {
@@ -156,7 +185,6 @@ class NotificationItem {
         break;
       }
     }
-    print("-getNextNotificationDate");
     return nextDate;
   }
 

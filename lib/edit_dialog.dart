@@ -42,19 +42,21 @@ import 'package:flutter/material.dart'
         Theme,
         TimeOfDay,
         Widget,
+        Wrap,
         kMinInteractiveDimension,
         showDatePicker,
         showTimePicker;
 import 'package:intl/intl.dart' show DateFormat;
+import 'package:notifier/letter_checkbox.dart';
 import 'package:notifier/notification_item.dart' show NotificationItem, Repeat;
-import 'package:notifier/theme.dart' show CustomTheme;
+import 'package:notifier/theme.dart' show CustomTheme, blue, grey, white;
 
 class EditDialog extends StatefulWidget {
   final NotificationItem item;
   final bool editMode;
   final void Function(NotificationItem item) onSave;
   final void Function()? onDelete;
-  var repeatEveryController = TextEditingController(
+  final repeatEveryController = TextEditingController(
     text: "1",
   );
 
@@ -330,32 +332,25 @@ class EditDialogState extends State<EditDialog> {
                   ),
                 ),
                 //* WEEKDAY CHECKBOXES
-                // Container(
-                //   padding: EdgeInsets.symmetric(horizontal: 24),
-                //   child: (() {
-                //     if (model.item['repeat'] == 'weekly') {
-                //       List<LetterCheckbox> checkboxes = [];
-                //       model.item['weekdays'].asMap().forEach((index, valuex) {
-                //         bool value = valuex;
-                //         checkboxes.add(
-                //           LetterCheckbox(
-                //             text: 'MTWTFSS'[index],
-                //             value: value,
-                //             onChanged: (bool newValue) {
-                //               model.item['weekdays'][index] = newValue;
-                //               print('[notifier] Updated selected weekdays: ' +
-                //                   model.item['weekdays'].toString());
-                //               model.rebuild();
-                //             },
-                //           ),
-                //         );
-                //       });
-                //       return Wrap(children: checkboxes);
-                //     } else {
-                //       return const SizedBox();
-                //     }
-                //   })(),
-                // )
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Wrap(
+                    children: [
+                      for (var i = 0; i < 7; i++)
+                        LetterCheckbox(
+                          value: widget.item.weekdays[i],
+                          text: 'MTWTFSS'[i],
+                          toggle: (newValue) {
+                            setState(() {
+                              widget.item.weekdays[i] = newValue;
+                            });
+                          },
+                          enabledColor: Get.isDarkMode ? grey.c8 : blue,
+                          disabledColor: Get.isDarkMode ? grey.c5 : white.c6,
+                        ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

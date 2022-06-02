@@ -122,13 +122,6 @@ class ListView extends StatelessWidget {
           childCount: c.items.length,
           (context, index) => InkWell(
             onTap: () async {
-              // if (item['repeat'] != 'never' &&
-              //     item['date'] < DateTime.now().millisecondsSinceEpoch) {
-              //   // make sure the date is not in the past for repeating notifications
-              //   print(
-              //       '[notifier] Running setNotifications() before opening edit dialog');
-              //   await listModel.setNotifications(appIsOpen: true);
-              // }
               var item = NotificationItem.fromJson(c.items[index].toJson());
               item.lastScheduledDate = item.getNextFutureDate();
               Get.dialog(EditDialog(
