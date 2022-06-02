@@ -53,6 +53,7 @@ class EditDialog extends StatefulWidget {
   final NotificationItem item;
   final bool editMode;
   final void Function(NotificationItem item) onSave;
+  final void Function()? onDelete;
   var repeatEveryController = TextEditingController(
     text: "1",
   );
@@ -61,6 +62,7 @@ class EditDialog extends StatefulWidget {
     required this.item,
     required this.editMode,
     required this.onSave,
+    this.onDelete,
   });
 
   @override
@@ -364,25 +366,21 @@ class EditDialogState extends State<EditDialog> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 //* DELETE
-                // (() {
-                //   if (mode == 'edit')
-                //     return Padding(
-                //       padding: EdgeInsets.only(right: 12),
-                //       child: MaterialButton(
-                //         highlightColor: themeModel.highlightColor,
-                //         splashColor: Colors.transparent,
-                //         onPressed: () {
-                //           listModel.delete(model.item['id']);
-                //           Navigator.of(context).pop();
-                //         },
-                //         child:
-                //             Text('Delete', style: themeModel.buttonTextStyle),
-                //         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                //       ),
-                //     );
-                //   else
-                //     return Container();
-                // })(),
+                if (widget.editMode)
+                  MaterialButton(
+                    splashColor: Colors.transparent,
+                    onPressed: () {
+                      if (widget.onDelete != null) {
+                        widget.onDelete!();
+                      }
+                      Get.back();
+                    },
+                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    child: const Text('Delete'),
+                  )
+                else
+                  const SizedBox(),
+                SizedBox(width: widget.editMode ? 12 : 0),
                 //* CANCEL
                 MaterialButton(
                   splashColor: Colors.transparent,

@@ -134,6 +134,10 @@ class ListView extends StatelessWidget {
               Get.dialog(EditDialog(
                 item: item,
                 editMode: true,
+                onDelete: () {
+                  c.items.removeAt(index);
+                  c.saveAndSchedule();
+                },
                 onSave: (item) {
                   c.items[index] = item;
                   c.saveAndSchedule();

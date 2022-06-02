@@ -183,7 +183,7 @@ class NotificationItem {
   }
 
   scheduleAt(int id, DateTime date) {
-    NotificationSchedule? schedule = null;
+    NotificationSchedule? schedule;
     if (date.isAfter(DateTime.now())) {
       schedule = NotificationCalendar(
         year: date.year,
