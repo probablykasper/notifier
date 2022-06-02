@@ -1,4 +1,3 @@
-import 'dart:isolate' show Isolate;
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart'
     show AndroidAlarmManager;
 import 'package:awesome_notifications/awesome_notifications.dart'
@@ -19,8 +18,7 @@ void scheduleNotifications() async {
 void handler() async {
   var prefs = await SharedPreferences.getInstance();
   final DateTime now = DateTime.now();
-  final int isolateId = Isolate.current.hashCode;
-  print("[$now] Hello, world! isolate=$isolateId");
+  print("[$now] Notification schedule handler");
   await AwesomeNotifications().cancelAll();
 
   var jsonItems = prefs.getStringList("notificationItems");
@@ -30,9 +28,11 @@ void handler() async {
   var items = jsonItems.map((jsonItem) {
     return NotificationItem.fromJson(jsonItem);
   }).toList();
+  print("ITEMS $jsonItems");
   for (var i = 0; i < items.length; i++) {
-    var nextDate = items[i].getNextDate();
+    var nextDate = items[i].getNextNotificationDate();
     if (nextDate != null) {
+      print("scheduleAt $nextDate ${items[i].repeat} \"${items[i].title}\"");
       items[i].scheduleAt(i, nextDate);
       items[i].lastScheduledDate = nextDate;
     }

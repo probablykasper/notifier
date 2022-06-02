@@ -211,7 +211,7 @@ class EditDialogState extends State<EditDialog> {
                   child: Row(
                     children: <Widget>[
                       //* REPEAT
-                      DropdownButton<Repeat>(
+                      DropdownButton<String>(
                         onChanged: (newValue) {
                           if (newValue != null) {
                             setState(() {

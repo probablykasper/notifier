@@ -30,12 +30,31 @@ import 'package:flutter/material.dart'
         Widget;
 import 'package:get/state_manager.dart';
 import 'package:notifier/edit_dialog.dart';
+import 'package:notifier/main.dart';
 import 'package:notifier/scheduler.dart';
 import 'notification_item.dart' show NotificationItem;
 import 'theme.dart' show CustomTheme, toggleDarkMode;
 
 class Controller extends GetxController {
   var items = <NotificationItem>[].obs;
+
+  load() async {
+    var prefs = await prefsFuture;
+    var jsonItems = prefs.getStringList("notificationItems");
+    if (jsonItems == null) {
+      return;
+    }
+    items.value = jsonItems.map((jsonItem) {
+      return NotificationItem.fromJson(jsonItem);
+    }).toList();
+  }
+
+  saveAndSchedule() async {
+    var prefs = await prefsFuture;
+    var jsonItems = items.map((item) => item.toJson()).toList();
+    prefs.setStringList("notificationItems", jsonItems);
+    scheduleNotifications();
+  }
 }
 
 class ListPage extends StatelessWidget {
@@ -43,6 +62,7 @@ class ListPage extends StatelessWidget {
   Widget build(context) {
     // Instantiate your class using Get.put() to make it available for all "child" routes there.
     final Controller c = Get.put(Controller());
+    c.load();
 
     return Scaffold(
         floatingActionButton: FloatingActionButton(
@@ -53,7 +73,7 @@ class ListPage extends StatelessWidget {
                 editMode: false,
                 onSave: (item) {
                   c.items.add(item);
-                  scheduleNotifications();
+                  c.saveAndSchedule();
                 },
               ));
             }),
@@ -109,12 +129,14 @@ class ListView extends StatelessWidget {
               //       '[notifier] Running setNotifications() before opening edit dialog');
               //   await listModel.setNotifications(appIsOpen: true);
               // }
+              var item = NotificationItem.fromJson(c.items[index].toJson());
+              item.lastScheduledDate = item.getNextFutureDate();
               Get.dialog(EditDialog(
-                item: NotificationItem.fromJson(c.items[index].toJson()),
+                item: item,
                 editMode: true,
                 onSave: (item) {
                   c.items[index] = item;
-                  scheduleNotifications();
+                  c.saveAndSchedule();
                 },
               ));
             },

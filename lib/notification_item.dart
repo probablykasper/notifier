@@ -1,20 +1,24 @@
 import 'dart:convert' show json;
 import 'package:awesome_notifications/awesome_notifications.dart'
-    show AwesomeNotifications, NotificationContent, NotificationCalendar;
+    show
+        AwesomeNotifications,
+        NotificationCalendar,
+        NotificationContent,
+        NotificationSchedule;
 
-enum Repeat {
-  never,
-  daily,
-  weekly,
-  monthly,
-  yearly,
+abstract class Repeat {
+  static const never = "never";
+  static const daily = "daily";
+  static const weekly = "weekly";
+  static const monthly = "monthly";
+  static const yearly = "yearly";
 }
 
 class NotificationItem {
   String title;
   String description;
   bool disabled;
-  Repeat repeat;
+  String repeat;
   DateTime originalDate;
   DateTime? lastScheduledDate;
 
@@ -42,12 +46,13 @@ class NotificationItem {
     );
   }
 
-  bool timeHasPassed() =>
-      originalDate.millisecondsSinceEpoch <
-      DateTime.now().millisecondsSinceEpoch;
-
   DateTime getLatestDate() {
     return lastScheduledDate ?? originalDate;
+  }
+
+  bool timeHasPassed() {
+    return getLatestDate().millisecondsSinceEpoch <
+        DateTime.now().millisecondsSinceEpoch;
   }
 
   factory NotificationItem.fromJson(String str) {
@@ -58,7 +63,9 @@ class NotificationItem {
       disabled: map['disabled'],
       repeat: map['repeat'],
       originalDate: DateTime.fromMillisecondsSinceEpoch(map['originalDate']),
-      lastScheduledDate: DateTime.fromMillisecondsSinceEpoch(map['lastDate']),
+      lastScheduledDate: map['lastDate'] == null
+          ? null
+          : DateTime.fromMillisecondsSinceEpoch(map['lastDate']),
     );
   }
 
@@ -74,33 +81,36 @@ class NotificationItem {
     return json.encode(map);
   }
 
-  DateTime? getNextDate() {
-    if (lastScheduledDate == null) {
+  // Get the next date from the last scheduled date
+  DateTime? _getDirectlyNextDate(DateTime? fromDate) {
+    if (fromDate == null) {
       return originalDate;
+    } else if (fromDate.isAfter(DateTime.now())) {
+      return fromDate;
     } else if (repeat == Repeat.never) {
       return null;
     } else if (repeat == Repeat.daily) {
       return DateTime(
-          lastScheduledDate!.year,
-          lastScheduledDate!.month,
-          lastScheduledDate!.day + 1,
+          fromDate.year,
+          fromDate.month,
+          fromDate.day + 1,
           originalDate.hour,
           originalDate.minute,
           originalDate.second,
           originalDate.millisecond);
     } else if (repeat == Repeat.weekly) {
       return DateTime(
-          lastScheduledDate!.year,
-          lastScheduledDate!.month,
-          lastScheduledDate!.day + 7,
+          fromDate.year,
+          fromDate.month,
+          fromDate.day + 7,
           originalDate.hour,
           originalDate.minute,
           originalDate.second,
           originalDate.millisecond);
     } else if (repeat == Repeat.monthly) {
       return DateTime(
-          lastScheduledDate!.year,
-          lastScheduledDate!.month + 1,
+          fromDate.year,
+          fromDate.month + 1,
           originalDate.day,
           originalDate.hour,
           originalDate.minute,
@@ -108,7 +118,7 @@ class NotificationItem {
           originalDate.millisecond);
     } else if (repeat == Repeat.yearly) {
       return DateTime(
-          lastScheduledDate!.year,
+          fromDate.year,
           originalDate.month,
           originalDate.day,
           originalDate.hour,
@@ -121,15 +131,56 @@ class NotificationItem {
     }
   }
 
+  /// Get the next date for scheduling a notification.
+  /// Returns null for already scheduled non-repeating dates.
+  DateTime? getNextNotificationDate() {
+    var directlyNextDate = _getDirectlyNextDate(lastScheduledDate);
+    if (directlyNextDate == null) {
+      return null;
+    }
+    // If the next date is far in the past, skip forward to the most recent date,
+    // but not into the future because then we could be
+    var now = DateTime.now();
+    var nextDate = directlyNextDate;
+    print("getNextNotificationDate");
+    while (nextDate.isBefore(now)) {
+      var nextNextDate = _getDirectlyNextDate(nextDate);
+      if (nextNextDate != null && nextNextDate.isBefore(now)) {
+        nextDate = nextNextDate;
+      } else {
+        break;
+      }
+    }
+    print("-getNextNotificationDate");
+    return nextDate;
+  }
+
+  /// Get the next date for scheduling a notification, but only in the future.
+  /// Returns null for already scheduled non-repeating dates.
+  DateTime? getNextFutureDate() {
+    var directlyNextDate = _getDirectlyNextDate(lastScheduledDate);
+    if (directlyNextDate == null) {
+      return null;
+    }
+    // If the next date is far in the past, skip forward to the most recent date,
+    // but not into the future because then we could be
+    var now = DateTime.now();
+    var nextDate = directlyNextDate;
+    while (nextDate.isBefore(now)) {
+      var nextNextDate = _getDirectlyNextDate(nextDate);
+      if (nextNextDate != null) {
+        nextDate = nextNextDate;
+      } else {
+        break;
+      }
+    }
+    return nextDate;
+  }
+
   scheduleAt(int id, DateTime date) {
-    AwesomeNotifications().createNotification(
-      content: NotificationContent(
-        id: id,
-        channelKey: 'scheduled_notifications',
-        title: title,
-        body: description,
-      ),
-      schedule: NotificationCalendar(
+    NotificationSchedule? schedule = null;
+    if (date.isAfter(DateTime.now())) {
+      schedule = NotificationCalendar(
         year: date.year,
         month: date.month,
         day: date.day,
@@ -138,7 +189,16 @@ class NotificationItem {
         second: date.second,
         preciseAlarm: true,
         allowWhileIdle: true,
+      );
+    }
+    AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: id,
+        channelKey: 'scheduled_notifications',
+        title: title,
+        body: description,
       ),
+      schedule: schedule,
     );
   }
 }
