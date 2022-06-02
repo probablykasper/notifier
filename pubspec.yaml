@@ -43,6 +43,7 @@ dependencies:
       url: https://github.com/fluttercommunity/plus_plugins.git
       ref: refs/pull/810/head
       path: packages/android_alarm_manager_plus
+  test: ^1.21.1
 
 dev_dependencies:
   flutter_test:

@@ -1,0 +1,24 @@
+name: Test
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Flutter setup
+        uses: subosito/flutter-action@v1.4.0
+        with:
+          flutter-version: '3.0.1'
+
+      - name: flutter analyze
+        run: flutter analyze --no-fatal-infos
+
+      - name: flutter test
+        run: flutter test

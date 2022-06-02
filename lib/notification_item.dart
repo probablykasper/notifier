@@ -14,6 +14,11 @@ abstract class Repeat {
   static const yearly = "yearly";
 }
 
+defaultDate() {
+  var now = DateTime.now();
+  return DateTime(now.year, now.month, now.day, now.hour + 2);
+}
+
 class NotificationItem {
   String title;
   String description;
@@ -35,18 +40,19 @@ class NotificationItem {
     required this.originalDate,
     required this.lastScheduledDate,
   });
+  NotificationItem.defaultWith({
+    this.title = '',
+    this.description = '',
+    this.disabled = false,
+    this.repeat = Repeat.never,
+    this.repeatEvery = 1,
+    this.weekdays = const [false, false, false, false, false, false, false],
+    DateTime? originalDate,
+    this.lastScheduledDate,
+  }) : originalDate = originalDate ?? DateTime.now();
+
   factory NotificationItem.getDefault() {
-    var now = DateTime.now();
-    return NotificationItem(
-      title: '',
-      description: '',
-      disabled: false,
-      repeat: Repeat.never,
-      repeatEvery: 1,
-      weekdays: [false, false, false, false, false, false, false],
-      originalDate: DateTime(now.year, now.month, now.day, now.hour + 2),
-      lastScheduledDate: null,
-    );
+    return NotificationItem.defaultWith();
   }
 
   DateTime getLatestDate() {
@@ -164,6 +170,10 @@ class NotificationItem {
       // never happens
       return null;
     }
+  }
+
+  DateTime? testGetDirectlyNextDate() {
+    return _getDirectlyNextDate(lastScheduledDate);
   }
 
   /// Get the next date for scheduling a notification.
