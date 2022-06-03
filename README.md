@@ -22,9 +22,16 @@ A notification scheduling Android app with support for repeating notifications.
 1. Install Flutter
 2. Run `flutter pub get`
 
-All you really need is to [install Flutter](https://flutter.dev/docs/get-started/install). Just run `flutter run` to start debugging the app, like you would with any Flutter app.
+## Code signing
+Create a `android/key.properties` that looks like this:
+```
+storePassword=example
+keyPassword=example
+keyAlias=key
+storeFile=/path/to/keystore.jks
+```
 
-The app is built using the [scoped_model](https://pub.dev/packages/scoped_model) package, which is worth knowing about. Other than that, it pretty much works like any basic Flutter app, so there's not much else that needs to be said.
+Follow Flutter's [Android signing guide](https://docs.flutter.dev/deployment/android#signing-the-app) for more details.
 
 ### Generate app icon
 
@@ -34,9 +41,11 @@ I used the `flutter_launcher_icons` package for that, so follow [these instructi
 
 Follow [these steps](https://flutter.dev/docs/deployment/android).
 
-### Releasing a new version
-
-1. Specify a version and build number in `pubspec.yaml`, or use `--build-name` and `--build-number`
-2. Generate Android apk: `flutter build apk`
-3. Rename the output file to `notifier-x.y.z.apk`
-4. Commit with the message `x.y.z` and add a tag/release to it with the output file attached.
+### Release new version
+1. Update `CHANGELOG.md`
+2. Bump the version number in `pubspec.yaml`
+3. Run `flutter analyze && flutter test`
+4. Run `flutter build apk`
+5. Rename the output file to `notifier-x.y.z.apk`
+6. Create a git tag in the format `v#.#.#`
+7. Create a GitHub release with the release notes and `.apk`
