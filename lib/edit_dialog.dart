@@ -216,7 +216,11 @@ class EditDialogState extends State<EditDialog> {
                         context, widget.item.getLatestDate());
                     if (newDate != null) {
                       setState(() {
-                        widget.item.originalDate = newDate;
+                        if (widget.editMode) {
+                          widget.item.lastScheduledDate = newDate;
+                        } else {
+                          widget.item.originalDate = newDate;
+                        }
                       });
                     }
                   },
