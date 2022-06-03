@@ -1,9 +1,7 @@
-import 'package:flutter/services.dart' show SystemChrome, SystemUiOverlayStyle;
 import 'package:get/get.dart'
     show ExtensionDialog, Get, GetxController, Inst, Obx, ListExtension;
 import 'package:flutter/material.dart'
     show
-        Brightness,
         Colors,
         Column,
         Container,
