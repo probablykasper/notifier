@@ -109,6 +109,7 @@ class EditDialogState extends State<EditDialog> {
 
   @override
   Widget build(context) {
+    const removedTopPadding = 16.0;
     return Form(
       key: formKey,
       child: SimpleDialog(
@@ -267,49 +268,39 @@ class EditDialogState extends State<EditDialog> {
                       ),
                       //* REPEAT EVERY
                       const SizedBox(width: 6),
-                      (() {
-                        if (widget.item.repeat == Repeat.never) {
-                          return const SizedBox();
-                        } else {
-                          const removedTopPadding = 16.0;
-                          return SizedBox(
-                            width: 35,
-                            height:
-                                kMinInteractiveDimension - removedTopPadding,
-                            child: TextField(
-                              controller: widget.repeatEveryController,
-                              onChanged: (newValue) {
-                                setState(() {
-                                  if (newValue == '') {
-                                    widget.item.repeatEvery = 1;
-                                  } else {
-                                    widget.item.repeatEvery =
-                                        int.parse(newValue);
-                                  }
-                                });
-                              },
-                              textAlign: TextAlign.center,
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                signed: false,
-                                decimal: false,
-                              ),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.deny(
-                                    RegExp('^0\$')),
-                                FilteringTextInputFormatter.digitsOnly,
-                                LengthLimitingTextInputFormatter(3),
-                              ],
-                              decoration: const InputDecoration(
-                                isDense: false,
-                                hintText: '1',
-                                contentPadding:
-                                    EdgeInsets.only(top: -removedTopPadding),
-                              ),
+                      if (widget.item.repeat != Repeat.never)
+                        SizedBox(
+                          width: 35,
+                          height: kMinInteractiveDimension - removedTopPadding,
+                          child: TextField(
+                            controller: widget.repeatEveryController,
+                            onChanged: (newValue) {
+                              setState(() {
+                                if (newValue == '') {
+                                  widget.item.repeatEvery = 1;
+                                } else {
+                                  widget.item.repeatEvery = int.parse(newValue);
+                                }
+                              });
+                            },
+                            textAlign: TextAlign.center,
+                            keyboardType: const TextInputType.numberWithOptions(
+                              signed: false,
+                              decimal: false,
                             ),
-                          );
-                        }
-                      })(),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.deny(RegExp('^0\$')),
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(3),
+                            ],
+                            decoration: const InputDecoration(
+                              isDense: false,
+                              hintText: '1',
+                              contentPadding:
+                                  EdgeInsets.only(top: -removedTopPadding),
+                            ),
+                          ),
+                        ),
                       const SizedBox(width: 6),
                       Text(
                         (() {
@@ -331,26 +322,27 @@ class EditDialogState extends State<EditDialog> {
                     ],
                   ),
                 ),
-                //* WEEKDAY CHECKBOXES
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Wrap(
-                    children: [
-                      for (var i = 0; i < 7; i++)
-                        LetterCheckbox(
-                          value: widget.item.weekdays[i],
-                          text: 'MTWTFSS'[i],
-                          toggle: (newValue) {
-                            setState(() {
-                              widget.item.weekdays[i] = newValue;
-                            });
-                          },
-                          enabledColor: Get.isDarkMode ? grey.c8 : blue,
-                          disabledColor: Get.isDarkMode ? grey.c5 : white.c6,
-                        ),
-                    ],
+                if (widget.item.repeat == Repeat.weekly)
+                  //* WEEKDAY CHECKBOXES
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Wrap(
+                      children: [
+                        for (var i = 0; i < 7; i++)
+                          LetterCheckbox(
+                            value: widget.item.weekdays[i],
+                            text: 'MTWTFSS'[i],
+                            toggle: (newValue) {
+                              setState(() {
+                                widget.item.weekdays[i] = newValue;
+                              });
+                            },
+                            enabledColor: Get.isDarkMode ? grey.c8 : blue,
+                            disabledColor: Get.isDarkMode ? grey.c5 : white.c6,
+                          ),
+                      ],
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -372,9 +364,7 @@ class EditDialogState extends State<EditDialog> {
                     },
                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     child: const Text('Delete'),
-                  )
-                else
-                  const SizedBox(),
+                  ),
                 SizedBox(width: widget.editMode ? 12 : 0),
                 //* CANCEL
                 MaterialButton(
