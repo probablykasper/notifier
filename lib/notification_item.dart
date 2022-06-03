@@ -79,7 +79,7 @@ class NotificationItem {
       disabled: map['disabled'],
       repeat: map['repeat'],
       repeatEvery: map['repeatEvery'],
-      weekdays: map['weekdays'],
+      weekdays: List<bool>.from(map['weekdays']),
       originalDate: DateTime.fromMillisecondsSinceEpoch(map['originalDate']),
       lastScheduledDate: map['lastDate'] == null
           ? null
