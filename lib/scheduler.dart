@@ -11,7 +11,7 @@ const mainAlarmId = 0;
 void scheduleNotifications() async {
   handler();
   await AndroidAlarmManager.periodic(
-      const Duration(minutes: 1), mainAlarmId, handler,
+      const Duration(hours: 8), mainAlarmId, handler,
       rescheduleOnReboot: true);
 }
 
