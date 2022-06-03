@@ -1,8 +1,9 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/services.dart' show SystemChrome, SystemUiOverlayStyle;
 import 'package:get/get.dart'
-    show ExtensionDialog, Get, GetxController, Inst, Obx;
+    show ExtensionDialog, Get, GetxController, Inst, Obx, ListExtension;
 import 'package:flutter/material.dart'
     show
+        Brightness,
         Colors,
         Column,
         Container,
@@ -21,6 +22,7 @@ import 'package:flutter/material.dart'
         Row,
         Scaffold,
         SliverAppBar,
+        SliverChildBuilderDelegate,
         SliverList,
         StatelessWidget,
         Switch,
@@ -28,10 +30,9 @@ import 'package:flutter/material.dart'
         TextStyle,
         Theme,
         Widget;
-import 'package:get/state_manager.dart';
-import 'package:notifier/edit_dialog.dart';
-import 'package:notifier/main.dart';
-import 'package:notifier/scheduler.dart';
+import 'package:notifier/edit_dialog.dart' show EditDialog;
+import 'package:notifier/main.dart' show prefsFuture;
+import 'package:notifier/scheduler.dart' show scheduleNotifications;
 import 'notification_item.dart' show NotificationItem;
 import 'theme.dart' show CustomTheme, toggleDarkMode;
 

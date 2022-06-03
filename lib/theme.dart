@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart'
     show
+        AppBarTheme,
         BorderRadius,
         Brightness,
         ButtonThemeData,
@@ -13,6 +14,7 @@ import 'package:flutter/material.dart'
         TextTheme,
         ThemeData,
         ThemeMode;
+import 'package:flutter/services.dart';
 import 'package:get/get.dart' show Get, GetNavigation;
 import 'main.dart' show prefsFuture;
 
@@ -110,6 +112,12 @@ ThemeData getTheme(bool darkMode) {
   return ThemeData(
     fontFamily: 'Jost',
     brightness: darkMode ? Brightness.dark : Brightness.light,
+    appBarTheme: const AppBarTheme(
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+    ),
     scaffoldBackgroundColor: color.c1,
     toggleableActiveColor: blue,
     floatingActionButtonTheme: FloatingActionButtonThemeData(
