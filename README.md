@@ -45,7 +45,7 @@ Follow [these steps](https://flutter.dev/docs/deployment/android).
 1. Update `CHANGELOG.md`
 2. Bump the version number in `pubspec.yaml`
 3. Run `flutter analyze && flutter test`
-4. Run `flutter build apk`
-5. Rename the output file to `notifier-x.y.z.apk`
+4. Run `flutter build apk --split-per-abi`
+5. Rename the output files to `notifier-v<VERSION>-<ABI>.apk`
 6. Create a git tag in the format `v#.#.#`
 7. Create a GitHub release with the release notes and `.apk`

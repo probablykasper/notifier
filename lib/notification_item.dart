@@ -41,15 +41,22 @@ class NotificationItem {
     required this.lastScheduledDate,
   });
   NotificationItem.defaultWith({
-    this.title = '',
-    this.description = '',
-    this.disabled = false,
-    this.repeat = Repeat.never,
-    this.repeatEvery = 1,
-    this.weekdays = const [false, false, false, false, false, false, false],
+    String? title,
+    String? description,
+    bool? disabled,
+    String? repeat,
+    int? repeatEvery,
+    List<bool>? weekdays,
     DateTime? originalDate,
     this.lastScheduledDate,
-  }) : originalDate = originalDate ?? DateTime.now();
+  })  : title = title ?? '',
+        description = description ?? '',
+        disabled = disabled ?? false,
+        repeat = repeat ?? Repeat.never,
+        repeatEvery = repeatEvery ?? 1,
+        weekdays =
+            weekdays ?? [false, false, false, false, false, false, false],
+        originalDate = originalDate ?? defaultDate();
 
   factory NotificationItem.getDefault() {
     return NotificationItem.defaultWith();
